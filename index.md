@@ -14,8 +14,7 @@ title: Group 12: Spotify
 
 ## <center> Problem Statement </center>
 <center> More specifically, we refined this into a two stage problem statement more clearly defining the term 'successful': </center>
-
-
+<br>
 > <center> 1. Predicting number of followers that a playlist will have using combinations of
 the above predictors that were seen to have varying degrees of association with playlist
 success, and using appropriately transformed variables </center>
