@@ -31,8 +31,7 @@ thousand followers. </center>
 #### <center> Literature Review/ Citations </center>
 
 <center> Outside work that was key to our project's success includes primarily the Spotify API and the publicly available spotipy 2.0 package. First off, using the Spotify API, we were certain to license our individual machines and abide by the developer terms of use located at https://developer.spotify.com/developer-terms-of-use/. With the spotipy package, we continued through the authentication with the Spotify API to use it in tandem. The spotipy package is freely available to the public as outlined in the following license: https://github.com/plamere/spotipy/blob/master/LICENSE.txt. </center>
-<center> </center>
- 
+<br><br> 
 <center> Looking into outside readings, we looked into the two references provided to us (cited below). Specifically reading into the ISMIR article, we did not delve into the specific audio-file similarities between two different songs, however we did draw inspiration for predictor variables from the section on co-occurence (as well as from talks with out TF Nick Hoernle). Specifically, this resulted in us evaluating the genre specifics and dynamics inherent within a playlist to see if they're all the same genre or varied either purposefully or incidentally. Reading into Logan's article, we similarly skipped the spectral recognition piece since we did not analyze audio files, but likewise we drew inspiration from the section on the number of songs from a given artist. So, while we did not delve into the specific technicals for either of these articles as we did not analyze audio files themselves, they were helpful and influential into crafting our prediction variables. </center>
  
 1.Berenzweig, Adam, Beth Logan, Daniel P.W. Ellis and Brian Whitman. A Large-Scale Evaluation
