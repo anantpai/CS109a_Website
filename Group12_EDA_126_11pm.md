@@ -1,6 +1,7 @@
 ---
 title: Summarizing our quantitative data
 notebook: Group12_EDA_126_11pm.ipynb
+nav_include: 2
 ---
 
 ## Contents
