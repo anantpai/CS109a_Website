@@ -2,11 +2,11 @@
 title: Group 12: Spotify
 ---
 
-Welcome to our homepage! We're so excited to present the first iteration of the Spotify Regressor (TM)
+# GROUP 12: SPOTIFY
 
-## Lets have fun
+## Welcome to our homepage! We're so excited to present the first iteration of the Spotify Regressor (TM)
 
->here is a quote
+<center> Group Members: Anant Pai, Andy Kim, Katherine Cohen, Trevor Noon </center>
 
 Here is *emph* and **bold**.
 
