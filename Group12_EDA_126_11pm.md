@@ -1,7 +1,6 @@
 ---
 title: Summarizing our quantitative data
-notebook: Group12_EDA_126_10pm.ipynb
-nav_include: 2
+notebook: Group12_EDA_126_11pm.ipynb
 ---
 
 ## Contents
@@ -12,17 +11,6 @@ nav_include: 2
 
 
 
-```python
-import numpy as np
-import pandas as pd
-import matplotlib
-import matplotlib.pyplot as plt
-import seaborn as sns; sns.set(color_codes=True)
-sns.set(style="whitegrid")
-import warnings
-warnings.filterwarnings('ignore')
-%matplotlib inline
-```
 
 
 **We performed our EDA using data from the Spotify API. The API featured "metadata in JSON format about artists, albums, and tracks directly from the Spotify catalogue".** 
@@ -491,7 +479,7 @@ eda_frame.drop(['playlist', 'name'], axis = 1).describe()
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_15_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_15_0.png)
 
 
 
@@ -499,7 +487,7 @@ eda_frame.drop(['playlist', 'name'], axis = 1).describe()
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_16_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_16_0.png)
 
 
 ### Exploring relationship between artist/song popularity and playlist popularity:
@@ -517,7 +505,7 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_21_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_21_0.png)
 
 
 ### % Popular Artists in a Playlist vs. Log Followers
@@ -527,7 +515,7 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_23_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_23_0.png)
 
 
 ### Average Artist Popularity vs. Log Followers
@@ -537,7 +525,7 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_25_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_25_0.png)
 
 
 We wanted to explore one of the most logical relationships, the tie between individual song or artist popularity and playlist popularity. Above we see the relationship between average song popularity (the average of the score 1-100 across all songs in the playlist) and number of playlist followers, as well as the average artist popularity and number of followers, for the top 25% of playlists. For both plots, we see a slight positive correlation between average song popularity and playlist success. 
@@ -555,7 +543,7 @@ We thought it would be interesting to see if playlists that are uniform in genre
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_30_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_30_0.png)
 
 
 ### Heatmap of our Variables
@@ -564,12 +552,21 @@ We thought it would be interesting to see if playlists that are uniform in genre
 
 
 
+We decided to use a heatmap in order to show how some of our variables were correlated with one another. Many of the results below show up as expected. Some are obvious, for instance:
+- Average artist followers directly correlates highly with proportion of popular artists in the playlist
+- Average song popularity directly correlates well with proportion of pop songs in the playlist
+
+But we also see things that are not immediately as intuitive:
+- There is negative correlation between the average duration of songs in a playlist and average song popularity
+- There is some positive correlation between the proportion of explicit songs in the playlist and the proportion of pop and rap songs, while
+For the sake of simplicity, we only included 3 genre variables, though later in our analysis we end up using a few more to describe how playlists 
 
 
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_33_0.png)
+
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_34_0.png)
 
 
 
@@ -585,7 +582,7 @@ We wanted to look at most popular tracks, artists, and genres represented across
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_37_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_38_0.png)
 
 
 
@@ -593,7 +590,7 @@ We wanted to look at most popular tracks, artists, and genres represented across
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_38_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_39_0.png)
 
 
 
@@ -624,5 +621,5 @@ We wanted to look at most popular tracks, artists, and genres represented across
 
 
 
-![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_43_0.png)
+![png](Group12_EDA_126_11pm_files/Group12_EDA_126_11pm_44_0.png)
 
