@@ -35,5 +35,6 @@ thousand followers. </center>
 of Acoustic and Subjective Music Similarity Measures. Proceedings of the ISMIR International
 Conference on Music Information Retrieval (Baltimore, MD), 2003, pp. 99-105.
 <br>
+
 2.Logan, B., A Content-Based Music Similarity Function, (Report CRL 2001/02) Compaq Computer
 Corporation Cambridge Research Laboratory, Technical Report Series (Jun. 2001).
