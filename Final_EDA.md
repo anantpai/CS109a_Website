@@ -1,7 +1,7 @@
 ---
 title: EDA
 notebook: Final_EDA.ipynb
-nav_include: 2
+nav_include: 3
 ---
 
 ## Contents
