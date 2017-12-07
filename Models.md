@@ -1,15 +1,8 @@
 ---
-title: EDA
-notebook: EDA.ipynb
+title: Models
+notebook: Models.ipynb
 nav_include: 3
 ---
-
-
-
-
-    /Users/anantpai/anaconda/lib/python3.6/site-packages/statsmodels/compat/pandas.py:56: FutureWarning: The pandas.core.datetools module is deprecated and will be removed in a future version. Please use the pandas.tseries module instead.
-      from pandas.core import datetools
-
 
 ## Our Modeling Journey
 
