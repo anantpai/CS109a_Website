@@ -1,8 +1,10 @@
 ---
 title: Group 12: Spotify
-# Hello!
+
 ---
-## <center> Group 12: Spotify </center>
+# Group 12
+
+## <center> Spotify Regressor and Playlist Generator</center>
 
 <center> Welcome to our homepage! We're so excited to present the first iteration of the Spotify Regressor (TM) </center>
 
@@ -41,3 +43,7 @@ Conference on Music Information Retrieval (Baltimore, MD), 2003, pp. 99-105.
 
 2.Logan, B., A Content-Based Music Similarity Function, (Report CRL 2001/02) Compaq Computer
 Corporation Cambridge Research Laboratory, Technical Report Series (Jun. 2001).
+
+<center> --- </center>
+
+Published December 7, 2017 
