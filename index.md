@@ -26,6 +26,8 @@ thousand followers. </center>
 
 <center> This broke our project down into three areas: modeling for prediction with regression, continuing that modeling with classification given the 200K follower cutoff, and finally the playlist generation itself. The final end goal is to create a playlist predicted to have at least 200K followers. </center>
 
+<center> --- </center>
+
 ### <center> Literature Review/ Citations </center>
 
 <center> Outside work that was key to our project's success includes primarily the Spotify API and the publicly available spotipy 2.0 package. First off, using the Spotify API, we were certain to license our individual machines and abide by the developer terms of use located at https://developer.spotify.com/developer-terms-of-use/. With the spotipy package, we continued through the authentication with the Spotify API to use it in tandem. The spotipy package is freely available to the public as outlined in the following license: https://github.com/plamere/spotipy/blob/master/LICENSE.txt. </center>
