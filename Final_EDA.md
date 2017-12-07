@@ -478,7 +478,7 @@ We aggregated the data from individual songs into averages across entire playlis
 ![png](Final_EDA_files/Final_EDA_16_0.png)
 
 
-### Exploring relationship between artist/song popularity and playlist popularity:
+## Exploring relationship between artist/song popularity and playlist popularity:
 
 This is a very unbalanced data set, and thus for much of our EDA we looked only at the **top 25%** of playlists in terms of follower number. The hope here is that this would be more illuminating in highlighting any trends, and would be less bogged down in the high number of playlists that have little to no followers. 
 
@@ -518,7 +518,7 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 We wanted to explore one of the most logical relationships, the tie between individual song or artist popularity and playlist popularity. Above we see the relationship between average song popularity (the average of the score 1-100 across all songs in the playlist) and number of playlist followers, as well as the average artist popularity and number of followers, for the top 25% of playlists. For both plots, we see a slight positive correlation between average song popularity and playlist success. 
 
-### Exploring Genre Diversity in Playlists
+## Exploring Genre Diversity in Playlists
 
 We thought it would be interesting to see if playlists that are uniform in genre, which we defined as being at least **80% composed of a single genre** of music, were more or less popular than genres which seemingly lacked a theme, and were composed of more of a hodgepodge of songs with varying genres. Above we see that there are a lot more playlists with mixed genre, though the spreads of the two look roughly the same. Thus, on average there seems to be no advantage to either a playlist composed entirely of one genre, or consisting of many genres. 
 
@@ -534,7 +534,7 @@ We thought it would be interesting to see if playlists that are uniform in genre
 ![png](Final_EDA_files/Final_EDA_30_0.png)
 
 
-### Heatmap of our Variables
+## Heatmap of our Variables
 
 
 
@@ -564,7 +564,7 @@ With regards to our response variable, we see that the strongest relationships t
 
 
 
-### Exploring what is featured most often in playlists
+## Exploring What is Featured Most Often in Playlists
 
 We wanted to look at most popular tracks, artists, and genres represented across playlists to get a sense of the distribution (i.e. is it fairly evenly spread or dominated by a small minority), and of any outliers that may be particularly indicative of a successful playlist.
 
