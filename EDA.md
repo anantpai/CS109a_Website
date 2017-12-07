@@ -1,7 +1,7 @@
 ---
 title: EDA
-notebook: Final_EDA.ipynb
-nav_include: 3
+notebook: EDA.ipynb
+nav_include: 2
 ---
 
 ## Contents
@@ -467,7 +467,7 @@ We aggregated the data from individual songs into averages across entire playlis
 
 
 
-![png](Final_EDA_files/Final_EDA_15_0.png)
+![png](EDA_files/EDA_15_0.png)
 
 
 
@@ -475,7 +475,7 @@ We aggregated the data from individual songs into averages across entire playlis
 
 
 
-![png](Final_EDA_files/Final_EDA_16_0.png)
+![png](EDA_files/EDA_16_0.png)
 
 
 ## Exploring relationship between artist/song popularity and playlist popularity:
@@ -493,7 +493,7 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-![png](Final_EDA_files/Final_EDA_21_0.png)
+![png](EDA_files/EDA_21_0.png)
 
 
 ### % Popular Artists in a Playlist vs. Log Followers
@@ -503,7 +503,7 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-![png](Final_EDA_files/Final_EDA_23_0.png)
+![png](EDA_files/EDA_23_0.png)
 
 
 ### Average Artist Popularity vs. Log Followers
@@ -513,7 +513,7 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-![png](Final_EDA_files/Final_EDA_25_0.png)
+![png](EDA_files/EDA_25_0.png)
 
 
 We wanted to explore one of the most logical relationships, the tie between individual song or artist popularity and playlist popularity. Above we see the relationship between average song popularity (the average of the score 1-100 across all songs in the playlist) and number of playlist followers, as well as the average artist popularity and number of followers, for the top 25% of playlists. For both plots, we see a slight positive correlation between average song popularity and playlist success. 
@@ -531,7 +531,7 @@ We thought it would be interesting to see if playlists that are uniform in genre
 
 
 
-![png](Final_EDA_files/Final_EDA_30_0.png)
+![png](EDA_files/EDA_30_0.png)
 
 
 ## Heatmap of our Variables
@@ -557,7 +557,7 @@ With regards to our response variable, we see that the strongest relationships t
 
 
 
-![png](Final_EDA_files/Final_EDA_34_0.png)
+![png](EDA_files/EDA_34_0.png)
 
 
 
@@ -573,7 +573,7 @@ We wanted to look at most popular tracks, artists, and genres represented across
 
 
 
-![png](Final_EDA_files/Final_EDA_38_0.png)
+![png](EDA_files/EDA_38_0.png)
 
 
 Here, the important trend is that the most popular artists fall into one of three categories. First, there are oldie artists that are timeless and thus remain popular even today (eg. The Beatles, Stevie Wonder, and Michael Jackson). Second, we have trendy artists that are hip with the times (eg. Drake, Rihanna, and Ed Sheeran). Third, there are random artists that don't seem immediately obvious or gibberish (eg. Penton Overseas, Sir John Gielgud, etc.). 
@@ -585,7 +585,7 @@ Also important to note is the Spotify generated error that Penton Overseas, Inc.
 
 
 
-![png](Final_EDA_files/Final_EDA_40_0.png)
+![png](EDA_files/EDA_40_0.png)
 
 
 Some interesting things to note here:
@@ -620,7 +620,7 @@ Some interesting things to note here:
 
 
 
-![png](Final_EDA_files/Final_EDA_46_0.png)
+![png](EDA_files/EDA_46_0.png)
 
 
 Here, we see that many of the most popular genres include, edm (electronic), pop, and rap music. This makes sense given current popular music tastes in the US. Additionally, we see above that the different between, for example, post-teen pop and pop is likely pretty insignificant. Thus, since songs do not fit neatly into genres, this predictor may be a little bit shaky. There is significant overlap in terms of genre (especially since we are thinking about the artis's genre as being definitive of the song genre, though that may not necessarily be the case. For exampe, Taylor Swift is classified now as pop even though her original music was country).

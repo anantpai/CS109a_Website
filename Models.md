@@ -1,21 +1,41 @@
 ---
-title: Step 1: Regression Models
-notebook: Regression_ModelPage.ipynb
-nav_include: 4
+title: Models
+notebook: Models.ipynb
+nav_include: 3
 ---
 
+## Contents
+{:.no_toc}
+*  
+{: toc}
 
-#### Our Modeling Journey
+**CS109A Final Project**<br/>
+**Group 12**<br/>
+**Trevor Noon Regression Work Page**<br/>
+
+Import libraries:
+
+
+
+
+
+## Our Modeling Journey
 
 Our journey in model creation had a variety of different phases as we iterated through the process running into roadblocks, circled back to try a different method or approach, and then repeated. Looking at an overview of what that actually meant for us we can briefly trace the outline of our steps and then walk through it.
+
 1. Initially, we ran various regressions (linear and regularization-based) on approximately 70 predictor variables. Despite multiple efforts we could not find any model that performed well.
+
 2. Adjusting for this, we went back to our data and bolstered it with additional indicators, interaction terms, and unique predictors we intuitively thought were useful. Running the same models on this data, we still had poor performance (even on our best cross validated Ridge Regression model).
-3. Thinking our data was still being negatively effected by the skew of playlist followers, we decided to only look at the popular playlists that we ultimately are seeking to generate. Using our new bolstered dataset on this subset, we saw mildly improved performance, but nothing substantial enough to gain incredible insights from.
-4. Moving away from regression, we decided to switch our focus to classification instead. We defined a success as being known as a 'popular' playlist above our follower threshold and undertook numerous classification models. Ultimately, a Random Forest Classification model proved to be the best model for us throughout the entire journey. 
 
-#### Full Modeling
+3. Moving away from regression, we decided to switch our focus to classification instead. We defined a success as being known as a 'popular' playlist above our follower threshold and undertook numerous classification models. Ultimately, a Decision Tree model proved to be the best model for us throughout the entire journey. 
 
-One of the goals of our project was to be able to predict the number of followers of a playlist, given a number of songs and their artists. Our first, and simplest predictive model was the Ordinary Least-Squares Multiple Linear Regression Model, which aims to minimize the error produced by a linear function of our predictors. In this case, error is defined by taking the mean of our squared residuals (the actual number of followers - our predicted number). This linear function of our predictors provides us with a simple equation relating our predictors, such as average artist popularity or song duration, to our response variable, the number of followers of a playlist.
+4. Now that we are able to tell whether or not a playlist is successful, we tried to create a regression model that would predict just how successful it would be. This intuition made sense because there were so many garbage playlists (eg. Learn to Speak Swedish, etc.). Thinking our data was still being negatively effected by the skew of playlist followers, we decided to only look at the popular playlists that we ultimately are seeking to generate. Using our new bolstered dataset on this subset, we saw mildly improved performance, but nothing substantial enough to gain incredible insights. 
+
+Thus, at the end, we are able to predict, with some accuracy, whether or not a playlist will be successful or not. Once we predict whether or not it is successful, we can predict how successful it will be (using a relatively unreliable model).
+
+## Model A: Regressing on the Full Dataset
+
+One of the goals of our project was to be able to predict the number of followers of a playlist, given a number of songs and their artists. Our first, and simplest predictive model was the Ordinary Least-Squares Multiple Linear Regression Model, which aims to minimize the error produced by a linear function of our predictors. In this case, error is defined by taking the mean of our squared residuals (the actual number of followers - our predicted number). This linear function of our predictors provides us with a simple equation relating our predictors, such as average artist popularity or song duration, to our response variable, the logged number of followers of a playlist.
 
 The benefit of this simple model is that it’s highly interpretable and easy to understand. However, due to the simplicity of the model, there are definitely assumptions that we must account for.
 1. Normality: our residuals should be normally distributed. We check this below using a residual vs. fitted plot.
@@ -232,7 +252,7 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 
-![png](Regression_ModelPage_files/Regression_ModelPage_11_1.png)
+![png](Models_files/Models_11_1.png)
 
 
 
@@ -242,12 +262,12 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 
-    <matplotlib.text.Text at 0x1174f60f0>
+    <matplotlib.text.Text at 0x1181f8ef0>
 
 
 
 
-![png](Regression_ModelPage_files/Regression_ModelPage_12_1.png)
+![png](Models_files/Models_12_1.png)
 
 
 
@@ -255,7 +275,7 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 
-![png](Regression_ModelPage_files/Regression_ModelPage_13_0.png)
+![png](Models_files/Models_13_0.png)
 
 
 Despite the fact that we violated some key assumptions, we looked further into linear regression to try and remedy the overfitting problem. Utilizing backwards stepwise regression and eliminating insignificant predictors, we hoped to address the problem. With that said, however, we were unsuccessful as we still experienced overfitting. This may seem strange since now there are only 14 predictors, but in examining the predictors the overfitting becomes clear. It makes absolutely no sense to have a significant variable of the interaction between Dua Lipa's presence in a playlist and the amount of country that it has to effect success by an enormous factor of $e^{70}$.
@@ -270,7 +290,7 @@ Despite the fact that we violated some key assumptions, we looked further into l
     Model:                            OLS   Adj. R-squared:                  0.174
     Method:                 Least Squares   F-statistic:                     9.931
     Date:                Thu, 07 Dec 2017   Prob (F-statistic):           2.32e-35
-    Time:                        13:14:23   Log-Likelihood:                -2738.4
+    Time:                        15:40:51   Log-Likelihood:                -2738.4
     No. Observations:                1106   AIC:                             5531.
     Df Residuals:                    1079   BIC:                             5666.
     Df Model:                          26                                         
@@ -340,9 +360,37 @@ Our hope was that their penalty factors would address the aforementioned problem
     Ridge Train R^2:  0.197137758465
 
 
-#### Popular Subset
 
-Circling back on another attempt to try regression, we decided to refocus and only look at playlists that were deemed popular (in the top quartile of followers). Looking only at this subset then, we recentered our dataset and tried the same regularization methods.
+
+```python
+data_matrix = [['Model Type', 'Train R^2 Performance', 'Overfitting?'],
+               ['Full Linear', 'Negative', 'NA'],
+               ['Backwards Stepwise', 'Negative', 'NA'],
+               ['LassoCV', 0.148, 'Unlikely'],
+               ['RidgeCV', 0.197, 'Unlikely']]
+
+table = ff.create_table(data_matrix)
+py.iplot(table, filename='simple_table')
+```
+
+
+    High five! You successfully sent some data to your account on plotly. View your plot in your browser at https://plot.ly/~cohenk2/0 or inside your plot.ly account where it is named 'simple_table'
+
+
+
+
+
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~cohenk2/0.embed" height="200px" width="100%"></iframe>
+
+
+
+## Model C: Regression: How Popular Is Popular?
+
+Since we are now able to predict whether or not a playlist will be popular, we attempt to create a regression model to figure out how successful a playlist that is classified as successful will be. 
+
+Here, we try to create a regression model, trained on the top quartile of playlists, since these are those that we consider "successful." Given that a playlist is successful, our model will tell us how successful it is. Circling back on another attempt to try regression, we decided to refocus and only look at playlists that were deemed popular (in the top quartile of followers). Looking only at this subset then, we recentered our dataset and tried the same regularization methods.
+
+** As a note: ** Here, we skip explaining some of the assumptions underlying the models because we already explained many of the assumptions when we were going through Model A. We follow a similar process below.
 
 
 
@@ -520,17 +568,216 @@ Circling back on another attempt to try regression, we decided to refocus and on
 
 
 
-With this big change, we did see a slight uptick in performance, but unfortunately nothing substantial.
+This is a substantial change by which we have essentially eliminated about 75% of our data. With this big change, we did see a slight uptick in performance, but unfortunately nothing substantial. We start first with a Full Linear Model.
+
+### Full Linear Regression Model
 
 
 
 
 
-    Ridge Train R^2:  0.324045167308
-    Ridge Test R^2:  -0.187883090485
-    Lasso Train R^2:  0.18823571324
-    Lasso Test R^2:  -0.102655312018
+Since there are far too many predictors in the full linear regression model, we will suppress the output. Instead, we try a Backward Stepwise regression to eliminate some of the predictors and prevent overfitting.
 
+### Backward Stepise for Linear Regression
+
+
+
+```python
+complete = False
+all_vars = list(x_train.columns)
+while(complete == False):
+    # Regression
+    x_this = x_train[all_vars]
+    regr = sm.OLS(y_train, x_this)
+    results_this = regr.fit()
+    # Pull max p-value
+    pvals = results_this.pvalues
+    for variable in range(len(pvals)):
+        pvals[variable] = float(pvals[variable])
+    variable = pvals.idxmax(axis = 0)
+    max_p = max(pvals.values)
+    # Remove that variable if p > .05
+    if max_p > 0.05:
+        all_vars.remove(variable)
+    else:
+        complete = True
+
+regress_bw = sm.OLS(y_train, x_train[all_vars])
+results_bw = regress_bw.fit()
+print(results_bw.summary())
+
+bw1_vars = all_vars
+x_bw1 = x_train[bw1_vars] 
+
+bw1_r2_train = []
+for train_index, test_index in kf.split(x_bw1):
+    train_start = train_index[0]
+    train_end = train_index[-1]
+    test_start = test_index[0]
+    test_end = test_index[-1]
+    regres = sm.OLS(y_train[train_start:train_end], x_bw1[train_start:train_end])
+    results_k = regres.fit()
+    y_hat_bw1_train = results_k.predict(x_bw1[test_start:test_end])
+    bw1_r2_train.append(r2_score(y_train[test_start:test_end],y_hat_bw1_train))
+    
+print("Backwards Stepwise CV Train R^2: ", np.mean(bw1_r2_train))
+```
+
+
+                                OLS Regression Results                            
+    ==============================================================================
+    Dep. Variable:              followers   R-squared:                       0.277
+    Model:                            OLS   Adj. R-squared:                  0.255
+    Method:                 Least Squares   F-statistic:                     12.51
+    Date:                Thu, 07 Dec 2017   Prob (F-statistic):           6.40e-12
+    Time:                        16:26:12   Log-Likelihood:                -306.91
+    No. Observations:                 202   AIC:                             625.8
+    Df Residuals:                     196   BIC:                             645.7
+    Df Model:                           6                                         
+    Covariance Type:            nonrobust                                         
+    ============================================================================================
+                                   coef    std err          t      P>|t|      [0.025      0.975]
+    --------------------------------------------------------------------------------------------
+    av_song_pop                  0.3487      0.098      3.563      0.000       0.156       0.542
+    classical_pct               -0.2559      0.092     -2.783      0.006      -0.437      -0.075
+    this_or_not                 -0.8966      0.264     -3.401      0.001      -1.417      -0.377
+    Drake                       -1.6898      0.621     -2.723      0.007      -2.913      -0.466
+    pct_w_genre                 -0.5887      0.122     -4.814      0.000      -0.830      -0.348
+    Ozuna*country_pct                 0          0        nan        nan           0           0
+    Ozuna*metal_pct                   0          0        nan        nan           0           0
+    Ozuna*indie_folk_pct              0          0        nan        nan           0           0
+    Ozuna*edm_pct                     0          0        nan        nan           0           0
+    Ozuna*classical_pct               0          0        nan        nan           0           0
+    Ozuna*jazz_pct                    0          0        nan        nan           0           0
+    Bad Bunny*country_pct             0          0        nan        nan           0           0
+    Bad Bunny*metal_pct               0          0        nan        nan           0           0
+    Bad Bunny*indie_folk_pct          0          0        nan        nan           0           0
+    Bad Bunny*edm_pct                 0          0        nan        nan           0           0
+    Bad Bunny*classical_pct           0          0        nan        nan           0           0
+    Bad Bunny*jazz_pct                0          0        nan        nan           0           0
+    Khalid*classical_pct              0          0        nan        nan           0           0
+    Khalid*jazz_pct                   0          0        nan        nan           0           0
+    Ed Sheeran*classical_pct          0          0        nan        nan           0           0
+    Drake*rap_pct                2.0227      0.830      2.438      0.016       0.386       3.659
+    Drake*metal_pct                   0          0        nan        nan           0           0
+    Drake*classical_pct               0          0        nan        nan           0           0
+    ==============================================================================
+    Omnibus:                       35.086   Durbin-Watson:                   2.016
+    Prob(Omnibus):                  0.000   Jarque-Bera (JB):               47.977
+    Skew:                          -1.070   Prob(JB):                     3.82e-11
+    Kurtosis:                       4.058   Cond. No.                          inf
+    ==============================================================================
+    
+    Warnings:
+    [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+    [2] The smallest eigenvalue is      0. This might indicate that there are
+    strong multicollinearity problems or that the design matrix is singular.
+    Backwards Stepwise CV Train R^2:  0.131344375103
+
+
+
+
+```python
+y_hat_test_bw = results_bw.predict(x_test[bw1_vars])
+print("Backwards Stepwise Test R^2: ", r2_score(y_test, y_hat_test_bw))
+```
+
+
+    Backwards Stepwise Test R^2:  -0.0472257109862
+
+
+Since we see a particularly bad test R^2 score, we go ahead and try other regression methods that we have learned, such as Ridge and Lasso Regularizations. We begin with those below.
+
+### Ridge Regression
+
+
+
+```python
+ridge_reg = RidgeCV()
+ridge_reg.fit(x_train, y_train)
+yhat_train_ridge = ridge_reg.predict(x_train)
+yhat_test_ridge = ridge_reg.predict(x_test)
+print("Ridge Train R^2: " ,r2_score(y_train,yhat_train_ridge))
+print("Ridge Test R^2: " ,r2_score(y_test,yhat_test_ridge))
+```
+
+
+    Ridge Train R^2:  0.30895531482
+    Ridge Test R^2:  -0.0257503367149
+
+
+
+
+```python
+sns.distplot(resids_ridge)
+plt.title('Ridge Residuals Histogram')
+plt.xlabel('Residual Value')
+plt.ylabel('Frequency')
+plt.show()
+
+```
+
+
+
+![png](Models_files/Models_33_0.png)
+
+
+Above, we see the scatterplot and histograms of the residuals, which seems relatively left skewed, which is an issue. Let's try Lasso Regression, now.
+
+### Lasso Regression
+
+
+
+```python
+lasso_reg = LassoCV()
+lasso_reg.fit(x_train, y_train)
+yhat_train_lasso = lasso_reg.predict(x_train)
+yhat_test_lasso = lasso_reg.predict(x_test)
+print("Lasso Train R^2: " ,r2_score(y_train,yhat_train_lasso))
+print("Lasso Test R^2: " ,r2_score(y_test,yhat_test_lasso))
+```
+
+
+    Lasso Train R^2:  0.229580517999
+    Lasso Test R^2:  -0.0155792592175
+
+
+
+
+```python
+sns.distplot(resids_lasso)
+plt.title('Lasso Residuals Histogram')
+plt.xlabel('Residual Value')
+plt.ylabel('Frequency')
+plt.show()
+```
+
+
+
+![png](Models_files/Models_37_0.png)
+
+
+We can take a higher level look at all of our models and compare their potentials, but really since all of these models have negative test $R^2$ values there really doesn't seem to be much here and we need to look elsewhere moving forward.
+
+
+
+
+
+    High five! You successfully sent some data to your account on plotly. View your plot in your browser at https://plot.ly/~cohenk2/0 or inside your plot.ly account where it is named 'simple_table'
+
+
+
+
+
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~cohenk2/0.embed" height="200px" width="100%"></iframe>
+
+
+
+Of the above four models, we would choose the Cross Validated Ridge Model. We say this for a couple of reasons.
+1. First, the Ridge Model uses regularization methods to decrease the bias caused be certain variables. This is particularly important in a case like this when we have so many predictors and comparatively fewer variables.
+2. Second, the Ridge Model is easily interpretable-- we have listed the significant coefficients above (with regularization penalty). This is great news in terms of whether or not Spotify will actually be able to make use of our findings. 
+3. The histogram of the residuals is still left skewed, but that is true of the residuals for Lasso as well, so this point is essentially a wash. 
+4. The Ridge Train R^2 is relatively high (though we acknowledge the high likelihood of overfitting).
 
 
 
@@ -570,63 +817,73 @@ factors[abs(factors['Coefficient']) > 0.15]
   </thead>
   <tbody>
     <tr>
-      <th>14</th>
-      <td>-0.413052</td>
-      <td>classical_pct</td>
-    </tr>
-    <tr>
-      <th>67</th>
-      <td>-0.321790</td>
-      <td>Drake</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>-0.214041</td>
-      <td>top_song_pop</td>
-    </tr>
-    <tr>
       <th>27</th>
-      <td>-0.214000</td>
+      <td>-0.392750</td>
       <td>this_or_not</td>
     </tr>
     <tr>
+      <th>67</th>
+      <td>-0.362134</td>
+      <td>Drake</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>-0.311361</td>
+      <td>classical_pct</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>-0.297277</td>
+      <td>number_or_not</td>
+    </tr>
+    <tr>
       <th>49</th>
-      <td>-0.187792</td>
+      <td>-0.285923</td>
       <td>The Weeknd</td>
     </tr>
     <tr>
-      <th>44</th>
-      <td>-0.173901</td>
-      <td>Imagine Dragons</td>
+      <th>7</th>
+      <td>-0.175691</td>
+      <td>rock_pct</td>
     </tr>
     <tr>
-      <th>61</th>
-      <td>-0.167843</td>
-      <td>Sam Smith</td>
+      <th>20</th>
+      <td>-0.175381</td>
+      <td>top_song_pop</td>
     </tr>
     <tr>
-      <th>16</th>
-      <td>-0.162958</td>
-      <td>popular_artist_pct</td>
+      <th>18</th>
+      <td>-0.152791</td>
+      <td>top_artist_pop</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>0.151759</td>
+      <td>Rihanna</td>
     </tr>
     <tr>
       <th>60</th>
-      <td>0.191890</td>
+      <td>0.152470</td>
       <td>J Balvin</td>
     </tr>
     <tr>
-      <th>38</th>
-      <td>0.245761</td>
-      <td>Dua Lipa</td>
+      <th>25</th>
+      <td>0.160702</td>
+      <td>diff_artist_pop</td>
     </tr>
     <tr>
-      <th>34</th>
-      <td>0.246925</td>
-      <td>Marshmello</td>
+      <th>17</th>
+      <td>0.165505</td>
+      <td>top_3_artist_av_pop</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>0.176802</td>
+      <td>top_or_not</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.466326</td>
+      <td>0.352347</td>
       <td>av_song_pop</td>
     </tr>
   </tbody>
@@ -635,23 +892,15 @@ factors[abs(factors['Coefficient']) > 0.15]
 
 
 
-We can take a higher level look at all of our models and compare their potentials, but really since all of these models have negative test $R^2$ values there really doesn't seem to be much here and we need to look elsewhere moving forward.
+** Discussion of Significant Variables **
 
+Here we attempt to discuss the most significant variables. The variable that seems to contribute most positively to increased success in a playlist is increasing the average song popularity, which intuitively makes sense since these songs tend to draw people in. Additioanlly, the "top or not" variable, which accounts for words like "Hot", "Top", or "viral" in the playlist name, increases success-- this may be because of confounding factors like Spotify being more likely to increase the visibility of these playlists. The average popularity of the top 3 artists, the range of artist popularity, and the presence of Rihanna or JBalvin in the playlist increases the success of the playlist. 
 
+Conversely, the higher the popularity of the top artist and song, the lower the success of the playlist (which is intuitively surprising!-- of course, this is a good time to mention the possibility of errors like multicollinearity, etc.). The percentage of rock and classical songs, the presence of The Weeknd and Drake, the presence of a number or the words "This Is:" in the playlist title reduces the success of the playlist.
 
+Here we see that while we were able to increase the Training R^2 of our dataset, the Test R^2 of the data was still particularly bad-- in fact, all Test R^2s were negative. This intuitively makes sense because with so many predictors and so few data (since we dropped so many of our observations), we are very likely to overfit. Despite using regularization methods like Lasso and Ridge to reduce the effectiveness of unnecessary variables, we still find that the models are quite bad. 
 
-
-    High five! You successfully sent some data to your account on plotly. View your plot in your browser at https://plot.ly/~cohenk2/0 or inside your plot.ly account where it is named 'simple_table'
-
-
-
-
-
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~cohenk2/0.embed" height="200px" width="100%"></iframe>
-
-
-
-Since we didn't see any increased performance here, we decided to shift our focus to classificaiton. Now, instead of trying to predict the exact number of followers, we defined a successful playlist as one above our threshold of 163K followers. Reshaping our question then, we were able to see some performance improvement.
+At this point, it feels as though we have tried everything and conclude that no regression model can effectively predict the number of followers our playlist will have. Though regression methods appear to be pretty useless here, we do note the everall effectiveness of the classification model in determining whether or not a playlist will perform in the top 25% of playlists.
 
 
 
