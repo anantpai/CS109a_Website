@@ -1,6 +1,5 @@
 ---
 title: Group 12: Spotify
-
 ---
 # Group 12
 
@@ -46,4 +45,4 @@ Corporation Cambridge Research Laboratory, Technical Report Series (Jun. 2001).
 
 <center> --- </center>
 
-Published December 7, 2017 
+Published December 7, 2017.
