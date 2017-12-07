@@ -5,7 +5,7 @@ title: Group 12: Spotify
 
 <center> Welcome to our homepage! We're so excited to present the first iteration of the Spotify Regressor (TM) </center>
 
-<center> ** Group Members: ** Anant Pai, Andy Kim, Katherine Cohen, Trevor Noon </center>
+**Group Members:** Anant Pai, Andy Kim, Katherine Cohen, Trevor Noon
 
 ## <center> Motivation </center>
 
