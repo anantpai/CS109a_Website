@@ -1,5 +1,5 @@
 ---
-title: EDA
+title: Step 1: Regression Models
 notebook: Regression_ModelPage.ipynb
 nav_include: 4
 ---
@@ -7,11 +7,6 @@ nav_include: 4
 Import libraries:
 
 
-
-
-
-    /Users/Trevor/anaconda/lib/python3.6/site-packages/statsmodels/compat/pandas.py:56: FutureWarning: The pandas.core.datetools module is deprecated and will be removed in a future version. Please use the pandas.tseries module instead.
-      from pandas.core import datetools
 
 
 #### Our Modeling Journey
