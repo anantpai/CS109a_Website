@@ -1,17 +1,13 @@
 ---
 title: Summarizing our quantitative data
-notebook: Group12_EDA_126_9pm.ipynb
-nav_include: 3
+notebook: Group12_EDA_126_10pm.ipynb
+nav_include: 1
 ---
 
 ## Contents
 {:.no_toc}
 *  
 {: toc}
-
-**CS109A Final Project**<br/>
-**Group 12**<br/>
-**EDA Page**<br/>
 
 
 
@@ -495,26 +491,15 @@ eda_frame.drop(['playlist', 'name'], axis = 1).describe()
 
 
 
-![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_16_0.png)
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_15_0.png)
 
 
 
 
-```python
-plt.figure(figsize = (12,8))
-sns.distplot(eda_frame['log_followers']);
-plt.title('Follower Log Distribution', size = 17)
-plt.xlabel("Log # of followers", size = 14);
-plt.ylabel("Frequency", size = 14)
-sns.despine(bottom=True, left=True)
-plt.grid(axis = 'x', color ='white', linestyle='-')
-ax = plt.gca()
-ax.tick_params(axis='both', which='both',length=0);
-```
 
 
 
-![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_17_0.png)
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_16_0.png)
 
 
 ### Exploring relationship between artist/song popularity and playlist popularity:
@@ -529,58 +514,33 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-```python
-plt.figure(figsize = (11,6))
-sns.regplot(np.asarray(pop_top), np.asarray(log_followers_top), marker = 'o', color = 'b')
-sns.despine(bottom=True, left=True)
-plt.xlabel("Average Song Popularity");
-plt.ylabel("Log # Followers")
-plt.title("# of Followers by Song Popularity")
-plt.show()
-```
 
 
 
-![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_22_0.png)
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_21_0.png)
 
 
 ### % Popular Artists in a Playlist vs. Log Followers
 
 
 
-```python
-plt.figure(figsize = (11,6))
-sns.regplot(top_sorted['popular_artist_pct'], np.asarray(log_followers_top), marker = 'o', color = 'b')
-sns.despine(bottom=True, left=True)
-plt.xlabel("Percentage Popular Artists");
-plt.ylabel("Log # Followers")
-plt.title("# of Followers by Artist Popularity")
-plt.show()
-```
 
 
 
-![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_24_0.png)
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_23_0.png)
 
 
 ### Average Artist Popularity vs. Log Followers
 
 
 
-```python
-plt.figure(figsize = (11,6))
-sns.regplot(top_sorted['log_artist_follow'], np.asarray(log_followers_top), marker = '', color = 'b')
-sns.despine(bottom=True, left=True)
-plt.xlabel("Log Avg Artist Followers");
-plt.ylabel("Log # Followers")
-plt.title("# of Followers by Artist Followers")
-plt.show()
-```
 
 
 
-![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_26_0.png)
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_25_0.png)
 
+
+We wanted to explore one of the most logical relationships, the tie between individual song or artist popularity and playlist popularity. Above we see the relationship between average song popularity (the average of the score 1-100 across all songs in the playlist) and number of playlist followers, as well as the average artist popularity and number of followers, for the top 25% of playlists. For both plots, we see a slight positive correlation between average song popularity and playlist success. 
 
 ### Exploring Genre Diversity in Playlists
 
@@ -588,71 +548,81 @@ We thought it would be interesting to see if playlists that are uniform in genre
 
 
 
-```python
-eda_frame['1genre'] = np.where((eda_frame['pop_pct']>=.8)|(eda_frame['rap_pct']>=.8)|(eda_frame['rock_pct']>=.8), 1, 0)
-mixed_genre = eda_frame.loc[eda_frame['1genre'] == 0]
-one_genre = eda_frame.loc[eda_frame['1genre'] == 1]
-```
 
 
 
 
-```python
-plt.figure(figsize = (11,8))
-sns.distplot(one_genre['log_followers'], label='dominated by 1')
-sns.distplot(mixed_genre['log_followers'], label='mixed genre')
-plt.legend(loc='upper right')
-plt.title('Genre Diversity and # of Followers', size = 17)
-plt.ylabel('Frequency', size = 14)
-plt.xlabel('Log # of Followers', size = 14)
-plt.show()
-```
 
 
 
-![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_30_0.png)
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_30_0.png)
 
 
 ### Heatmap of our Variables
 
 
 
-```python
-eda_train = eda_frame.drop(['playlist','name','followers'], axis = 1)
-train_corr_matrix = pd.DataFrame(np.corrcoef(eda_train.T))
-train_corr_matrix.columns = eda_train.columns
-train_corr_matrix.index = eda_train.columns
-```
 
 
 
 
-```python
-plt.figure(figsize = (12,10))
-sns.heatmap(train_corr_matrix,annot=True)
-plt.title('Heatmap of Variables', size = 17)
-plt.xticks(rotation=90, size = 12) 
-plt.yticks(rotation=0, size = 12) 
-plt.show()
-```
 
 
 
-![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_33_0.png)
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_33_0.png)
 
 
 
 
-```python
-artist_counts = df.groupby('artist_name', as_index=False)['count'].count().sort_values('count', ascending=False)
-artist_counts = artist_counts.head(30)
-artist_counts = artist_counts.sort_values('count')
-plt.figure(figsize = (18,10))
-sns.barplot(artist_counts['artist_name'], artist_counts['count'], palette="Blues_d")
-plt.xticks(rotation=90, size = 17)
-plt.title('Top 30 Artists with the Most Appearances in Playlists', size = 20)
-plt.xlabel('Artist Name', size = 15)
-plt.ylabel('Counts', size = 15)
-plt.show()
-```
+
+
+### Exploring what is featured most often in playlists
+
+We wanted to look at most popular tracks, artists, and genres represented across playlists to get a sense of the distribution (i.e. is it fairly evenly spread or dominated by a small minority), and of any outliers that may be particularly indicative of a successful playlist.
+
+
+
+
+
+
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_37_0.png)
+
+
+
+
+
+
+
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_38_0.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ['dance pop', ' pop', ' post-teen pop']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+![png](Group12_EDA_126_10pm_files/Group12_EDA_126_10pm_43_0.png)
 
