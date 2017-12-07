@@ -1,8 +1,8 @@
 ---
-title: The Case of the Italian Olives
+title: Group 12: Spotify
 ---
 
-This is the home page
+Welcome to our homepage! We're so excited to present the first iteration of the Spotify Regressor (TM)
 
 ## Lets have fun
 

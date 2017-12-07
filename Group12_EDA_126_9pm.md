@@ -1,6 +1,6 @@
 ---
 title: Summarizing our quantitative data
-notebook: Group12_EDA_126_8pm.ipynb
+notebook: Group12_EDA_126_9pm.ipynb
 nav_include: 3
 ---
 
@@ -43,11 +43,6 @@ df = pd.read_csv('total_info.csv', encoding = 'latin-1')
 
 
 
-```python
-del df['Unnamed: 0']
-df['artist_popularity'] = pd.to_numeric(df['artist_popularity'], errors = 'coerce')
-df['artist_followers'] = pd.to_numeric(df['artist_followers'], errors = 'coerce')
-```
 
 
 
@@ -189,44 +184,6 @@ We appended indicator variables to tell us whether a song in a playlist could be
 
 
 
-```python
-pop_ind = []
-rap_ind = []
-rock_ind = []
-hip_hop_ind = []
-
-for idx, row in enumerate(df['artist_genres'].values):
-    if 'pop' in row:
-        pop_ind.append(1)
-        rap_ind.append(0)
-        rock_ind.append(0)
-        hip_hop_ind.append(0)
-    elif 'rap' in row:
-        rap_ind.append(1)
-        pop_ind.append(0)
-        rock_ind.append(0)
-        hip_hop_ind.append(0)
-    elif 'rock' in row:
-        rock_ind.append(1)
-        rap_ind.append(0)
-        pop_ind.append(0)
-        hip_hop_ind.append(0)
-    elif 'hip' in row:
-        rap_ind.append(0)
-        pop_ind.append(0)
-        rock_ind.append(0)
-        hip_hop_ind.append(1)
-    else:
-        pop_ind.append(0)
-        rap_ind.append(0)
-        rock_ind.append(0)
-        hip_hop_ind.append(0)
-        
-df['pop_ind'] = pop_ind
-df['rap_ind'] = rap_ind
-df['rock_ind'] = rock_ind
-df['hip_hop_ind'] = hip_hop_ind
-```
 
 
 
@@ -249,40 +206,14 @@ df.columns
 
 
 
-We aggregated the data from individual songs into averages across entire playlists.
 
 
 
-```python
-unique_plists = df['playlist_id'].unique()
-columns = ['playlist','name','followers','num_songs','av_song_pop','pct_explicit','avg_dur','av_artist_followers', 'pop_pct', 'rap_pct', 'rock_pct', 'popular_artist_pct']
-eda_frame = pd.DataFrame(index=range(0,len(unique_plists)), columns=columns)
 
-for idx,plist in enumerate(unique_plists):
-    eda_frame.loc[idx]['playlist'] = plist
-    eda_frame.loc[idx]['name'] = df.loc[df['playlist_id'] == plist]['playlist_name']
-    eda_frame.loc[idx]['followers'] = np.mean(df.loc[df['playlist_id'] == plist]['followers'])
-    eda_frame.loc[idx]['num_songs'] = len(df.loc[df['playlist_id'] == plist])
-    eda_frame.loc[idx]['av_song_pop'] = np.mean(df.loc[df['playlist_id'] == plist]['popularity'])
-    eda_frame.loc[idx]['pct_explicit'] = np.mean(df.loc[df['playlist_id'] == plist]['explicit'])
-    eda_frame.loc[idx]['avg_dur'] = np.mean(df.loc[df['playlist_id'] == plist]['duration_ms'])
-    eda_frame.loc[idx]['av_artist_followers'] = np.mean(df.loc[df['playlist_id'] == plist]['artist_followers'])
-    eda_frame.loc[idx]['pop_pct'] = np.mean(df.loc[df['playlist_id'] == plist]['pop_ind'])
-    eda_frame.loc[idx]['rap_pct'] = np.mean(df.loc[df['playlist_id'] == plist]['rap_ind'])
-    eda_frame.loc[idx]['rock_pct'] = np.mean(df.loc[df['playlist_id'] == plist]['rock_ind'])
-    eda_frame.loc[idx]['hip_hop_pct'] = np.mean(df.loc[df['playlist_id'] == plist]['hip_hop_ind'])
-    eda_frame.loc[idx]['avg_num_artists'] = np.mean(df.loc[df['playlist_id'] == plist]['number_of_artists'])
-    eda_frame.loc[idx]['popular_artist_pct'] = np.mean(df.loc[df['playlist_id'] == plist]['popular_artist_ind'])
-```
-
-
-These conglomerated metrics include the playlist’s average artist followers, percent explicit, number of songs, percent of playlist that is a certain genre (pop, rap, rock, etc), percent popular artists, average song duration, average song popularity (scale of 1-100).
+We aggregated the data from individual songs into averages across entire playlists. These conglomerated metrics include the playlist’s average artist followers, percent explicit, number of songs, percent of playlist that is a certain genre (pop, rap, rock, etc), percent popular artists, average song duration, average song popularity (scale of 1-100).
 
 
 
-```python
-eda_frame.head()
-```
 
 
 
@@ -399,12 +330,6 @@ eda_frame.head()
 
 
 
-```python
-eda_frame['log_followers'] = np.log(eda_frame['followers'].astype(float))
-eda_frame['log_artist_follow'] = np.log(eda_frame['av_artist_followers'].astype(float))
-eda_frame = eda_frame.dropna(0)
-eda_frame = eda_frame.replace([np.inf, -np.inf], 0)
-```
 
 
 
@@ -567,22 +492,10 @@ eda_frame.drop(['playlist', 'name'], axis = 1).describe()
 
 
 
-```python
-plt.figure(figsize = (12,8))
-sns.distplot(eda_frame['followers'], bins = 90);
-plt.title('Follower Distribution', size = 17)
-plt.xlabel("# of followers", size = 14);
-plt.ylabel("Frequency", size = 14)
-sns.despine(bottom=True, left=True)
-plt.xlim(0,2*10**7)
-plt.grid(axis = 'x', color ='white', linestyle='-')
-ax = plt.gca()
-ax.tick_params(axis='both', which='both',length=0);
-```
 
 
 
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_17_0.png)
+![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_16_0.png)
 
 
 
@@ -601,43 +514,7 @@ ax.tick_params(axis='both', which='both',length=0);
 
 
 
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_18_0.png)
-
-
-
-
-```python
-plt.hist(eda_frame['followers'], bins = 20)
-plt.title('Follower Distribution')
-plt.xlabel("# of followers");
-plt.ylabel("Frequency")
-sns.despine(bottom=True, left=True)
-plt.grid(axis = 'x', color ='white', linestyle='-')
-ax = plt.gca()
-ax.tick_params(axis='both', which='both',length=0);
-```
-
-
-
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_19_0.png)
-
-
-
-
-```python
-plt.hist(eda_frame['av_artist_followers'], bins = 20)
-plt.title('Follower Distribution')
-plt.xlabel("# of followers");
-plt.ylabel("Frequency")
-sns.despine(bottom=True, left=True)
-plt.grid(axis = 'x', color ='white', linestyle='-')
-ax = plt.gca()
-ax.tick_params(axis='both', which='both',length=0);
-```
-
-
-
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_20_0.png)
+![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_17_0.png)
 
 
 ### Exploring relationship between artist/song popularity and playlist popularity:
@@ -646,35 +523,6 @@ This is a very unbalanced data set, and thus for much of our EDA we looked only 
 
 
 
-```python
-top_quart = eda_frame['followers'].quantile(0.75)
-top_frame = eda_frame.loc[eda_frame['followers'] >= top_quart]
-
-top_sorted = top_frame.sort_values(by='log_followers')
-log_followers_top = list(top_sorted['log_followers'])
-followers_top = list(top_sorted['followers'])
-pop_top = list(top_sorted['av_song_pop'])
-```
-
-
-#### Distribution of Song Popularity
-
-
-
-```python
-plt.figure(figsize = (11,8))
-sns.distplot(pop_top, bins = 50)
-plt.xlabel("Song Popularity");
-plt.ylabel("Frequency")
-plt.title("Dist of Song Popularity")
-sns.despine(bottom=True, left=True)
-plt.grid(axis = 'x', color ='white', linestyle='-')
-plt.show()
-```
-
-
-
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_25_0.png)
 
 
 ### Average Song Popularity vs. Log Followers
@@ -693,7 +541,7 @@ plt.show()
 
 
 
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_27_0.png)
+![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_22_0.png)
 
 
 ### % Popular Artists in a Playlist vs. Log Followers
@@ -712,7 +560,7 @@ plt.show()
 
 
 
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_29_0.png)
+![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_24_0.png)
 
 
 ### Average Artist Popularity vs. Log Followers
@@ -731,7 +579,7 @@ plt.show()
 
 
 
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_31_0.png)
+![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_26_0.png)
 
 
 ### Exploring Genre Diversity in Playlists
@@ -762,12 +610,49 @@ plt.show()
 
 
 
-![png](Group12_EDA_126_8pm_files/Group12_EDA_126_8pm_35_0.png)
+![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_30_0.png)
+
+
+### Heatmap of our Variables
+
+
+
+```python
+eda_train = eda_frame.drop(['playlist','name','followers'], axis = 1)
+train_corr_matrix = pd.DataFrame(np.corrcoef(eda_train.T))
+train_corr_matrix.columns = eda_train.columns
+train_corr_matrix.index = eda_train.columns
+```
 
 
 
 
 ```python
+plt.figure(figsize = (12,10))
+sns.heatmap(train_corr_matrix,annot=True)
+plt.title('Heatmap of Variables', size = 17)
+plt.xticks(rotation=90, size = 12) 
+plt.yticks(rotation=0, size = 12) 
+plt.show()
+```
 
+
+
+![png](Group12_EDA_126_9pm_files/Group12_EDA_126_9pm_33_0.png)
+
+
+
+
+```python
+artist_counts = df.groupby('artist_name', as_index=False)['count'].count().sort_values('count', ascending=False)
+artist_counts = artist_counts.head(30)
+artist_counts = artist_counts.sort_values('count')
+plt.figure(figsize = (18,10))
+sns.barplot(artist_counts['artist_name'], artist_counts['count'], palette="Blues_d")
+plt.xticks(rotation=90, size = 17)
+plt.title('Top 30 Artists with the Most Appearances in Playlists', size = 20)
+plt.xlabel('Artist Name', size = 15)
+plt.ylabel('Counts', size = 15)
+plt.show()
 ```
 
