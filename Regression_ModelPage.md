@@ -4,10 +4,6 @@ notebook: Regression_ModelPage.ipynb
 nav_include: 4
 ---
 
-Import libraries:
-
-
-
 
 #### Our Modeling Journey
 
