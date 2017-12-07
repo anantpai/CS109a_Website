@@ -1,22 +1,14 @@
 ---
-title: Models
-notebook: Models.ipynb
+title: EDA
+notebook: EDA.ipynb
 nav_include: 3
 ---
 
-## Contents
-{:.no_toc}
-*  
-{: toc}
-
-**CS109A Final Project**<br/>
-**Group 12**<br/>
-**Trevor Noon Regression Work Page**<br/>
-
-Import libraries:
 
 
 
+    /Users/anantpai/anaconda/lib/python3.6/site-packages/statsmodels/compat/pandas.py:56: FutureWarning: The pandas.core.datetools module is deprecated and will be removed in a future version. Please use the pandas.tseries module instead.
+      from pandas.core import datetools
 
 
 ## Our Modeling Journey
@@ -34,6 +26,8 @@ Our journey in model creation had a variety of different phases as we iterated t
 Thus, at the end, we are able to predict, with some accuracy, whether or not a playlist will be successful or not. Once we predict whether or not it is successful, we can predict how successful it will be (using a relatively unreliable model).
 
 ## Model A: Regressing on the Full Dataset
+
+### Linear Regression
 
 One of the goals of our project was to be able to predict the number of followers of a playlist, given a number of songs and their artists. Our first, and simplest predictive model was the Ordinary Least-Squares Multiple Linear Regression Model, which aims to minimize the error produced by a linear function of our predictors. In this case, error is defined by taking the mean of our squared residuals (the actual number of followers - our predicted number). This linear function of our predictors provides us with a simple equation relating our predictors, such as average artist popularity or song duration, to our response variable, the logged number of followers of a playlist.
 
@@ -252,7 +246,7 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 
-![png](Models_files/Models_11_1.png)
+![png](Models_files/Models_10_1.png)
 
 
 
@@ -260,14 +254,7 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 
-
-
-    <matplotlib.text.Text at 0x1181f8ef0>
-
-
-
-
-![png](Models_files/Models_12_1.png)
+![png](Models_files/Models_11_0.png)
 
 
 
@@ -275,10 +262,12 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 
-![png](Models_files/Models_13_0.png)
+![png](Models_files/Models_12_0.png)
 
 
 Despite the fact that we violated some key assumptions, we looked further into linear regression to try and remedy the overfitting problem. Utilizing backwards stepwise regression and eliminating insignificant predictors, we hoped to address the problem. With that said, however, we were unsuccessful as we still experienced overfitting. This may seem strange since now there are only 14 predictors, but in examining the predictors the overfitting becomes clear. It makes absolutely no sense to have a significant variable of the interaction between Dua Lipa's presence in a playlist and the amount of country that it has to effect success by an enormous factor of $e^{70}$.
+
+### Backward Stepwise
 
 
 
@@ -290,7 +279,7 @@ Despite the fact that we violated some key assumptions, we looked further into l
     Model:                            OLS   Adj. R-squared:                  0.174
     Method:                 Least Squares   F-statistic:                     9.931
     Date:                Thu, 07 Dec 2017   Prob (F-statistic):           2.32e-35
-    Time:                        15:40:51   Log-Likelihood:                -2738.4
+    Time:                        18:04:58   Log-Likelihood:                -2738.4
     No. Observations:                1106   AIC:                             5531.
     Df Residuals:                    1079   BIC:                             5666.
     Df Model:                          26                                         
@@ -341,6 +330,8 @@ Despite the fact that we violated some key assumptions, we looked further into l
     Backwards Stepwise CV Train R^2:  -0.0217653666496
 
 
+### Lasso
+
 Moving away from pure linear regression, we looked for better success with regularization methods - specifically Lasso and Ridge regression. The main difference between the OLS regression and these regularization methods are that they both introduce a penalty factor. The methods still inherently minimize a loss function (to minimize error), but the penalty factors serve to account for extreme values in parameters. Lasso's penalty form relies on the absolute value of the coefficients while ridge uses the square of the coefficients (notice how both must be positive to increase the loss function and actually serve as a penalty). 
 
 
@@ -352,6 +343,8 @@ Our hope was that their penalty factors would address the aforementioned problem
 
     Lasso Train R^2:  0.147704204575
 
+
+### Ridge
 
 
 
@@ -582,46 +575,6 @@ Since there are far too many predictors in the full linear regression model, we 
 
 
 
-```python
-complete = False
-all_vars = list(x_train.columns)
-while(complete == False):
-    # Regression
-    x_this = x_train[all_vars]
-    regr = sm.OLS(y_train, x_this)
-    results_this = regr.fit()
-    # Pull max p-value
-    pvals = results_this.pvalues
-    for variable in range(len(pvals)):
-        pvals[variable] = float(pvals[variable])
-    variable = pvals.idxmax(axis = 0)
-    max_p = max(pvals.values)
-    # Remove that variable if p > .05
-    if max_p > 0.05:
-        all_vars.remove(variable)
-    else:
-        complete = True
-
-regress_bw = sm.OLS(y_train, x_train[all_vars])
-results_bw = regress_bw.fit()
-print(results_bw.summary())
-
-bw1_vars = all_vars
-x_bw1 = x_train[bw1_vars] 
-
-bw1_r2_train = []
-for train_index, test_index in kf.split(x_bw1):
-    train_start = train_index[0]
-    train_end = train_index[-1]
-    test_start = test_index[0]
-    test_end = test_index[-1]
-    regres = sm.OLS(y_train[train_start:train_end], x_bw1[train_start:train_end])
-    results_k = regres.fit()
-    y_hat_bw1_train = results_k.predict(x_bw1[test_start:test_end])
-    bw1_r2_train.append(r2_score(y_train[test_start:test_end],y_hat_bw1_train))
-    
-print("Backwards Stepwise CV Train R^2: ", np.mean(bw1_r2_train))
-```
 
 
                                 OLS Regression Results                            
@@ -630,7 +583,7 @@ print("Backwards Stepwise CV Train R^2: ", np.mean(bw1_r2_train))
     Model:                            OLS   Adj. R-squared:                  0.255
     Method:                 Least Squares   F-statistic:                     12.51
     Date:                Thu, 07 Dec 2017   Prob (F-statistic):           6.40e-12
-    Time:                        16:26:12   Log-Likelihood:                -306.91
+    Time:                        18:05:18   Log-Likelihood:                -306.91
     No. Observations:                 202   AIC:                             625.8
     Df Residuals:                     196   BIC:                             645.7
     Df Model:                           6                                         
@@ -677,10 +630,6 @@ print("Backwards Stepwise CV Train R^2: ", np.mean(bw1_r2_train))
 
 
 
-```python
-y_hat_test_bw = results_bw.predict(x_test[bw1_vars])
-print("Backwards Stepwise Test R^2: ", r2_score(y_test, y_hat_test_bw))
-```
 
 
     Backwards Stepwise Test R^2:  -0.0472257109862
@@ -692,14 +641,6 @@ Since we see a particularly bad test R^2 score, we go ahead and try other regres
 
 
 
-```python
-ridge_reg = RidgeCV()
-ridge_reg.fit(x_train, y_train)
-yhat_train_ridge = ridge_reg.predict(x_train)
-yhat_test_ridge = ridge_reg.predict(x_test)
-print("Ridge Train R^2: " ,r2_score(y_train,yhat_train_ridge))
-print("Ridge Test R^2: " ,r2_score(y_test,yhat_test_ridge))
-```
 
 
     Ridge Train R^2:  0.30895531482
@@ -708,34 +649,18 @@ print("Ridge Test R^2: " ,r2_score(y_test,yhat_test_ridge))
 
 
 
-```python
-sns.distplot(resids_ridge)
-plt.title('Ridge Residuals Histogram')
-plt.xlabel('Residual Value')
-plt.ylabel('Frequency')
-plt.show()
-
-```
 
 
 
-![png](Models_files/Models_33_0.png)
+![png](Models_files/Models_35_0.png)
 
 
-Above, we see the scatterplot and histograms of the residuals, which seems relatively left skewed, which is an issue. Let's try Lasso Regression, now.
+Above, we see the histogram of the residuals, which seems relatively right skewed and not centered around 0, which is an issue. Let's try Lasso Regression, now.
 
 ### Lasso Regression
 
 
 
-```python
-lasso_reg = LassoCV()
-lasso_reg.fit(x_train, y_train)
-yhat_train_lasso = lasso_reg.predict(x_train)
-yhat_test_lasso = lasso_reg.predict(x_test)
-print("Lasso Train R^2: " ,r2_score(y_train,yhat_train_lasso))
-print("Lasso Test R^2: " ,r2_score(y_test,yhat_test_lasso))
-```
 
 
     Lasso Train R^2:  0.229580517999
@@ -744,32 +669,17 @@ print("Lasso Test R^2: " ,r2_score(y_test,yhat_test_lasso))
 
 
 
-```python
-sns.distplot(resids_lasso)
-plt.title('Lasso Residuals Histogram')
-plt.xlabel('Residual Value')
-plt.ylabel('Frequency')
-plt.show()
-```
 
 
 
-![png](Models_files/Models_37_0.png)
+![png](Models_files/Models_39_0.png)
 
+
+Above, we see the histogram of the residuals for Lasso, which seems relatively right skewed and not centered around 0, which is an issue.
 
 We can take a higher level look at all of our models and compare their potentials, but really since all of these models have negative test $R^2$ values there really doesn't seem to be much here and we need to look elsewhere moving forward.
 
 
-
-
-
-    High five! You successfully sent some data to your account on plotly. View your plot in your browser at https://plot.ly/~cohenk2/0 or inside your plot.ly account where it is named 'simple_table'
-
-
-
-
-
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~cohenk2/0.embed" height="200px" width="100%"></iframe>
 
 
 
@@ -780,115 +690,6 @@ Of the above four models, we would choose the Cross Validated Ridge Model. We sa
 4. The Ridge Train R^2 is relatively high (though we acknowledge the high likelihood of overfitting).
 
 
-
-```python
-coef_vals = ridge_reg.coef_
-factors = pd.DataFrame(coef_vals, columns = ['Coefficient'])
-factors['Variable'] = x_train.columns
-factors = factors.sort_values('Coefficient')
-factors[abs(factors['Coefficient']) > 0.15]
-```
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Coefficient</th>
-      <th>Variable</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>27</th>
-      <td>-0.392750</td>
-      <td>this_or_not</td>
-    </tr>
-    <tr>
-      <th>67</th>
-      <td>-0.362134</td>
-      <td>Drake</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>-0.311361</td>
-      <td>classical_pct</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>-0.297277</td>
-      <td>number_or_not</td>
-    </tr>
-    <tr>
-      <th>49</th>
-      <td>-0.285923</td>
-      <td>The Weeknd</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>-0.175691</td>
-      <td>rock_pct</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>-0.175381</td>
-      <td>top_song_pop</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>-0.152791</td>
-      <td>top_artist_pop</td>
-    </tr>
-    <tr>
-      <th>45</th>
-      <td>0.151759</td>
-      <td>Rihanna</td>
-    </tr>
-    <tr>
-      <th>60</th>
-      <td>0.152470</td>
-      <td>J Balvin</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>0.160702</td>
-      <td>diff_artist_pop</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>0.165505</td>
-      <td>top_3_artist_av_pop</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>0.176802</td>
-      <td>top_or_not</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.352347</td>
-      <td>av_song_pop</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 
 
@@ -901,10 +702,3 @@ Conversely, the higher the popularity of the top artist and song, the lower the 
 Here we see that while we were able to increase the Training R^2 of our dataset, the Test R^2 of the data was still particularly bad-- in fact, all Test R^2s were negative. This intuitively makes sense because with so many predictors and so few data (since we dropped so many of our observations), we are very likely to overfit. Despite using regularization methods like Lasso and Ridge to reduce the effectiveness of unnecessary variables, we still find that the models are quite bad. 
 
 At this point, it feels as though we have tried everything and conclude that no regression model can effectively predict the number of followers our playlist will have. Though regression methods appear to be pretty useless here, we do note the everall effectiveness of the classification model in determining whether or not a playlist will perform in the top 25% of playlists.
-
-
-
-```python
-
-```
-
