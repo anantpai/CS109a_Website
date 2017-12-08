@@ -4,9 +4,6 @@ notebook: Conclusion.ipynb
 nav_include: 5
 ---
 
-
-### Conclusion
-
 Despite facing multiple obstacles over the course of this project, such as data road blocks and models that weren't as successful as we would have liked, we were ultimately able to gain insights as to some factors that might be related to overall success of a playlist, that translated into generation of cohesive playlists that we believe have the potential to be successful. Our goal of correctly predicting playlist followers definitely fell short of our initial hopes, however using what we learned about the data, we were able to develope alternate strategies through shifting our scope to the classification of successful playlists. Through this, we ultimately did see significant improvements.  
 
 **Strengths**:
