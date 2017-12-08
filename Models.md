@@ -20,13 +20,6 @@ Thus, at the end, we are able to predict, with some accuracy, whether or not a p
 
 
 
-```python
-from IPython.display import Image
-Image(filename='workflow.png')
-```
-
-
-
 
 
 ![png](Models_files/Models_3_0.png)
