@@ -4,7 +4,6 @@ notebook: Models.ipynb
 nav_include: 3
 ---
 
-
 ## Our Modeling Journey
 
 Our journey in model creation had a variety of different phases as we iterated through the process of running into roadblocks and circling back to try a different method or approach. Looking at an overview of what that actually meant for us we can briefly trace the outline of our steps and then walk through it.
@@ -35,6 +34,12 @@ Image(filename='workflow.png')
 
 
 ## Model A: Regressing on the Full Dataset
+
+### Overview
+
+We start with OLS multiple regression not because we think that simple linear regression will be a particularly good fit for the data. There is no reason to believe that the assumptions of linear regression would be upheld, or that the predictor variables we have access to will be highly enough correlated with number of playlist followers to give us any sort of successful prediction. However, we use this as our first model just for completion, and to affirm these assumptions that the OLS multiple linear regression is in fact a poor predictive model for number of playlist followers. 
+
+To attempt at improving this, we try various methods such as Ridge and Lasso regressions, as well as backwise stepwisse variable selection. The process is detailed below:
 
 ### Linear Regression
 
@@ -255,15 +260,7 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 
-![png](Models_files/Models_11_1.png)
-
-
-
-
-
-
-
-![png](Models_files/Models_12_0.png)
+![png](Models_files/Models_12_1.png)
 
 
 
@@ -272,6 +269,14 @@ Looking at the models themselves, we can see if their inherent assumptions held.
 
 
 ![png](Models_files/Models_13_0.png)
+
+
+
+
+
+
+
+![png](Models_files/Models_14_0.png)
 
 
 Despite the fact that we violated some key assumptions, we looked further into linear regression to try and remedy the overfitting problem. Utilizing backwards stepwise regression and eliminating insignificant predictors, we hoped to address the problem. With that said, however, we were unsuccessful as we still experienced overfitting. This may seem strange since now there are only 14 predictors, but in examining the predictors the overfitting becomes clear. It makes absolutely no sense to have a significant variable of the interaction between Dua Lipa's presence in a playlist and the amount of country that it has to effect success by an enormous factor of $e^{70}$.
@@ -434,7 +439,7 @@ The first baseline model that we preformed for classification was Logistic Regre
 
 
 
-![png](Models_files/Models_33_0.png)
+![png](Models_files/Models_34_0.png)
 
 
 ### PCA
@@ -469,7 +474,7 @@ In the end, PCA was comparable to the full logistic regression in terms of predi
 
 
 
-![png](Models_files/Models_37_0.png)
+![png](Models_files/Models_38_0.png)
 
 
 ### Decision Tree
@@ -485,7 +490,7 @@ We cross validated the optimal depth of the tree to be 2 decisions (indicating t
 
 
 
-![png](Models_files/Models_39_0.png)
+![png](Models_files/Models_40_0.png)
 
 
 
@@ -505,7 +510,7 @@ We cross validated the optimal depth of the tree to be 2 decisions (indicating t
 
 
 
-![png](Models_files/Models_41_0.png)
+![png](Models_files/Models_42_0.png)
 
 
 ### K-NN
@@ -536,7 +541,7 @@ Because of this, it is unsurprising that KNN is the worst preformance of the mod
 
 
 
-![png](Models_files/Models_44_0.png)
+![png](Models_files/Models_45_0.png)
 
 
 ### Random Forest
@@ -552,7 +557,7 @@ The random forest is seen below to have a train prediction accuracy of $\bf{.69}
 
 
 
-![png](Models_files/Models_46_0.png)
+![png](Models_files/Models_47_0.png)
 
 
 
@@ -583,7 +588,7 @@ The random forest is seen below to have a train prediction accuracy of $\bf{.69}
 
 
 
-![png](Models_files/Models_49_0.png)
+![png](Models_files/Models_50_0.png)
 
 
 
@@ -593,141 +598,11 @@ The random forest is seen below to have a train prediction accuracy of $\bf{.69}
 
 
 
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>pred</th>
-      <th>weight</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>num_songs</td>
-      <td>0.006297</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>av_song_pop</td>
-      <td>0.400135</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>pct_explicit</td>
-      <td>0.031838</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>avg_dur</td>
-      <td>0.034040</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>pop_pct</td>
-      <td>0.026123</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>rap_pct</td>
-      <td>0.002603</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>rock_pct</td>
-      <td>0.060450</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>country_pct</td>
-      <td>0.002032</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>indie_folk_pct</td>
-      <td>0.019656</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>edm_pct</td>
-      <td>0.081291</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>top_3_song_avg_pop</td>
-      <td>0.062123</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>percent_international</td>
-      <td>0.035751</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>diff_song_pop</td>
-      <td>0.040818</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>diff_artist_pop</td>
-      <td>0.009817</td>
-    </tr>
-    <tr>
-      <th>69</th>
-      <td>pct_w_genre</td>
-      <td>0.025569</td>
-    </tr>
-    <tr>
-      <th>126</th>
-      <td>Marshmello*rap_pct</td>
-      <td>0.032075</td>
-    </tr>
-    <tr>
-      <th>155</th>
-      <td>Kanye West*edm_pct</td>
-      <td>0.014525</td>
-    </tr>
-    <tr>
-      <th>237</th>
-      <td>Imagine Dragons*rock_pct</td>
-      <td>0.055466</td>
-    </tr>
-    <tr>
-      <th>239</th>
-      <td>Imagine Dragons*country_pct</td>
-      <td>0.014815</td>
-    </tr>
-    <tr>
-      <th>270</th>
-      <td>Maroon 5*rock_pct</td>
-      <td>0.005597</td>
-    </tr>
-    <tr>
-      <th>390</th>
-      <td>Future*rap_pct</td>
-      <td>0.038978</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+![png](Models_files/Models_51_0.png)
 
 
 
-Above is a list of predictors that the random forest output found to be significant for a forest with the optimal number of trees and with each tree having the optimal number of predictors. Note that these are slightly different than the predictors used in our generative model, only because of the randomness of random forest output and natural variability in what it produces. 
+Above is a list of predictors that the random forest output found to be significant for a forest with the optimal number of trees and with each tree having the optimal number of predictors.
 
 
 
@@ -1051,7 +926,7 @@ Since we see a particularly bad test R^2 score, we go ahead and try other regres
 
 
 
-![png](Models_files/Models_70_0.png)
+![png](Models_files/Models_71_0.png)
 
 
 Above, we see the histogram of the residuals, which seems relatively right skewed and not centered around 0, which is an issue. Let's try Lasso Regression, now.
@@ -1071,7 +946,7 @@ Above, we see the histogram of the residuals, which seems relatively right skewe
 
 
 
-![png](Models_files/Models_74_0.png)
+![png](Models_files/Models_75_0.png)
 
 
 Above, we see the histogram of the residuals for Lasso, which seems relatively right skewed and not centered around 0, which is an issue.

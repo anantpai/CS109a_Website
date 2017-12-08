@@ -23,14 +23,6 @@ Our scoring metric itself is affected, as mentioned, by the attributes from our 
 
 
 
-    /Users/Trevor/anaconda/lib/python3.6/site-packages/statsmodels/compat/pandas.py:56: FutureWarning: The pandas.core.datetools module is deprecated and will be removed in a future version. Please use the pandas.tseries module instead.
-      from pandas.core import datetools
-
-
-
-
-
-
 
 
 
