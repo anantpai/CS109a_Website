@@ -5,10 +5,6 @@ nav_include: 3
 ---
 
 
-
-
-
-
 ## Our Modeling Journey
 
 Our journey in model creation had a variety of different phases as we iterated through the process of running into roadblocks and circling back to try a different method or approach. Looking at an overview of what that actually meant for us we can briefly trace the outline of our steps and then walk through it.
@@ -22,10 +18,6 @@ Our journey in model creation had a variety of different phases as we iterated t
 4. Now that we are able to tell whether or not a playlist is successful, we tried to create a regression model that would predict just how successful it would be. This intuition made sense because there were so many garbage playlists (eg. Learn to Speak Swedish, etc.). Thinking our data was still being negatively effected by the skew of playlist followers, we decided to only look at the popular playlists that we ultimately are seeking to generate. Using our new bolstered dataset on this subset, we saw mildly improved performance, but nothing substantial enough to gain incredible insights. 
 
 Thus, at the end, we are able to predict, with some accuracy, whether or not a playlist will be successful or not. Once we predict whether or not it is successful, we can predict how successful it will be (using a relatively unreliable model). You see our workflow below.
-
-
-
-
 
 
 
@@ -381,7 +373,7 @@ Our hope was that their penalty factors would address the aforementioned problem
 
 
 
-TODO: Explain this!
+These are somewhat respectable numbers, but the predictive accuracy of any of these models on our test data was 0. Thus, we dismiss these models as being essentially useless. At this point, since we are unable to create a regresison that accurately predicts the number of followers that a playlist has, we move on to try classification to see if we can have any success in predicting simply whether a playlist can be successful or not (not how successful it will be).
 
 ## Model B: Classification: Is it Popular?
 
