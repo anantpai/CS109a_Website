@@ -1,0 +1,24 @@
+---
+title: Conclusion
+notebook: Conclusion.ipynb
+nav_include: 5
+---
+
+
+### Conclusion
+
+Overall, looking at our project, we weren't as successful as one would have hoped, but we ultimately did get some seemingly nice generated playlists in the end. Our goal of correctly predicting playlist followers definitely fell short of the goal, however when we switched our scope to the classification of successful playlists we did see significant improvements.  
+
+**Strengths**
+Our strengths as a group were in most areas except for the direct results. We were able to secure the data from the Spotify API early on, complete good EDA and the creation of new variables and a good foundational data set to build off of. Additionally, despite not having the best $R^2$ values or incredible results from our models, we were still able to generate some pretty fire playlists (if we may say so ourselves) with the information and insights that we gained from these models.
+
+** Weaknesses** Our main weaknesses were in the models themselves. We had very little success in absolute prediction accuracy and in nailing down any insights that weren't intuitive naturally when thinking about the playlists on a qualitative level. A lot of our test $R^2$ values were 0 or negative and at times our AUC was very close to 0.5 meaning we weren't much more accurate than a coin flip.
+
+**Future Work** If given more time (and resources) we would like to expand our dataset and remodel. We strongly believe that Spotify playlist success is directly correlated to the amount of exposure that Spotify gives it in terms of visual space within their application. Some playlists are very niche and can only be found when searched whereas others appear everytime you open the application. Additionally, given more time, we may have taken a wider scope and gone for a more niche approach in playlist creation (as they did for the recent 2017 'wrapped' promotion).
+
+
+
+```python
+
+```
+
