@@ -4,6 +4,19 @@ notebook: Models.ipynb
 nav_include: 3
 ---
 
+## Contents
+{:.no_toc}
+*  
+{: toc}
+
+
+
+
+
+    /Users/anantpai/anaconda/lib/python3.6/site-packages/statsmodels/compat/pandas.py:56: FutureWarning: The pandas.core.datetools module is deprecated and will be removed in a future version. Please use the pandas.tseries module instead.
+      from pandas.core import datetools
+
+
 ## Our Modeling Journey
 
 Our journey in model creation had a variety of different phases as we iterated through the process running into roadblocks, circled back to try a different method or approach, and then repeated. Looking at an overview of what that actually meant for us we can briefly trace the outline of our steps and then walk through it.
@@ -349,7 +362,7 @@ Our hope was that their penalty factors would address the aforementioned problem
 
 
 ```python
-data_matrix = [['Model Type', 'Train R^2 Performance', 'Overfitting?'],
+data_matrix = [['Model Type', 'Train R^2 CV Performance', 'Overfitting?'],
                ['Full Linear', 'Negative', 'NA'],
                ['Backwards Stepwise', 'Negative', 'NA'],
                ['LassoCV', 0.148, 'Unlikely'],
@@ -367,6 +380,627 @@ py.iplot(table, filename='simple_table')
 
 
 <iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~cohenk2/0.embed" height="200px" width="100%"></iframe>
+
+
+
+TODO: Explain this!
+
+## Model B: Classification: Is it Popular?
+
+
+
+
+
+Since our regression model on the full data set yielded poor results at predicting the number of followers a playlist would have, we thought a useful approach would be to see if classification of a playlist as successful or not (as defined by being in the top quartile of playlists in terms of number of followers) would be more useful.
+In terms of metrics to be used for classification, we look both at classification accuracy, AUC, as well as true positive and true negative rates. The AUC and the confusion matrix are the best indication of the success of the classifier, because they highlight the tradeoff between true positives and false positives, true negatives and false negatives, and the shortcomings of using classification accuracy alone in an unbalanced dataset like this one where there are few true positives to detect.
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Logistic Regression with L2 Penalization (Baseline model)
+
+The first baseline model that we preformed for classification was Logistic Regression cross validated with an L2 penalizaiton factor. This model works by calculating the degree to which each predictor affect the log odds of the probability of being successful or not. The log odds is calculated by: log$\left(\dfrac{p}{1-p}\right)$, with p being the probability of a playlist being successful. L2 regularization means that we are attempting to account for overfitting by providing a penalization factor, and is cross validated to give us a sense of accuracy on out of sample observations. This yields a classificaiton accuracy on the train set of $\bf{.758}$, and an AUC of $\bf{.72}$. Though the baseline model has a relatively high AUC, the confusion matrix indicates that this is driven by the high true negative rate. The model is **only correctly predicting 14 of 209 "successful" playlists. We will use this true positive rate as a baseline when comparing all following models**
+
+
+
+```python
+ind_train, ind_val = train_test_split(range(train_data.shape[0]), train_size=0.75)
+
+#x's
+x_train = pd.concat([x_data.iloc[ind_train, :]])
+x_val = pd.concat([x_data.iloc[ind_val, :]])
+
+#y's
+y_train = y_data.iloc[ind_train]
+y_val = y_data.iloc[ind_val]
+
+log_cv = LogisticRegressionCV() # Uses cross-validation for given C's and L2 penalty by default
+log_cv.fit(x_train, y_train)
+pred = log_cv.predict(x_val)
+print('CV Train Accurcay', log_cv.score(x_train, y_train))
+print('CV Test Accuracy', log_cv.score(x_val, y_val))
+confusion_matrix(y_train, log_cv.predict(x_train))
+```
+
+
+    CV Train Accurcay 0.75271411339
+    CV Test Accuracy 0.758122743682
+
+
+
+
+
+    array([[610,  10],
+           [195,  14]])
+
+
+
+
+
+```python
+from sklearn.metrics import roc_curve, auc
+
+def make_roc(name, clf, ytest, xtest, ax=None, labe=5, proba=True, skip=0):
+    initial=False
+    if not ax:
+        ax=plt.gca()
+        initial=True
+    if proba:# For stuff like logistic regression
+        fpr, tpr, thresholds=roc_curve(ytest, clf.predict_proba(xtest)[:,1])
+        #print(fpr, tpr)
+    else:# For stuff like SVM
+        fpr, tpr, thresholds=roc_curve(ytest, clf.decision_function(xtest))
+    roc_auc = auc(fpr, tpr)
+    if skip:
+        l=fpr.shape[0]
+        ax.plot(fpr[0:l:skip], tpr[0:l:skip], '.-', alpha=0.3, label='ROC curve for %s (area = %0.2f)' % (name, roc_auc))
+    else:
+        ax.plot(fpr, tpr, '.-', alpha=0.3, label='ROC curve for %s (area = %0.2f)' % (name, roc_auc))
+    label_kwargs = {}
+    label_kwargs['bbox'] = dict(
+        boxstyle='round,pad=0.3', alpha=0.2,
+    )
+    if labe!=None:
+        for k in range(0, fpr.shape[0],labe):
+            #from https://gist.github.com/podshumok/c1d1c9394335d86255b8
+            threshold = str(np.round(thresholds[k], 3))
+            ax.annotate(threshold, (fpr[k], tpr[k]), **label_kwargs)
+    if initial:
+        ax.plot([0, 1], [0, 1], 'k--')
+        ax.set_xlim([0.0, 1.0])
+        ax.set_ylim([0.0, 1.05])
+        ax.set_xlabel('False Positive Rate')
+        ax.set_ylabel('True Positive Rate')
+        ax.set_title('ROC')
+    ax.legend(loc="lower right")
+    return ax
+
+sns.set_context("poster")
+ax=make_roc("logistic",log_cv, y_train, x_train, labe=10, skip=2)
+```
+
+
+
+![png](Models_files/Models_32_0.png)
+
+
+### PCA
+
+Though we use an L2 penalizaiton factor in an attempt to prevent overfitting in the simple logistic regression above, our model still has many predictors (roughly 500), and thus there’s risk of overfitting. Overfitting occurs when our model is highly complex and begins to model the noise in our data due to randomness alone. In addition, there is also potential to overfit since there is so much variation in what creates a successful playlist. One tactic to try and avoid overfitting is to reduce the number of predictors using a process known as Principal Component Analysis, or PCA. PCA attempts to explain the variance observed in our data using features. Each feature is a linear combination of a subset of the predictors; ideally we are able to explain a large amount of the variance with as few features as possible.
+
+In the end, PCA was comparable to the full logistic regression in terms of predictive power, with an AUC of $\bf{.73}$ and a train classification accuracy of $\bf{.76}$. However, in terms of the true positive rate, we see that PCA is outpreforming the baseline, correctly predicting 39 of 209 of successful playlists. In terms of the ultimate goal of interpreting this as to which predictors are relevant towards playlist success, PCA loses much of its interpretability as a model. This is because we are ultimately left with linear combinations of the predictors, they lose their initial interpretations. This makes PCA an unlikely candidate for our ultimate classification model selection.  
+
+
+
+```python
+
+accuracy_train_cv = np.zeros((25,10))
+accuracy_valid_cv = np.zeros((25,10))
+
+fold_ctr = 0
+
+for itrain, ivalid in KFold(n_splits=10, shuffle=True, random_state=9001).split(x_data.index):
+    # in general though its good for creating consistent psets, don't put seeds into kfold
+    # split
+    X_train_cv = x_data.iloc[itrain,:]
+    y_train_cv = y_data.iloc[itrain]
+    X_valid_cv = x_data.iloc[ivalid,:]
+    y_valid_cv = y_data.iloc[ivalid]
+    
+    # pca
+    pca = PCA()
+    pca.fit(X_train_cv)
+    X_train_pca_cv = pca.transform(X_train_cv)
+    X_valid_pca_cv = pca.transform(X_valid_cv)
+    
+    for comp in range(1,25):
+        # fit logit
+        logregcv = LogisticRegression(C=100000, fit_intercept=True)
+        logregcv.fit(X_train_pca_cv[:,:comp], y_train_cv)
+        
+        # get predictions
+        yhat_train_pca_cv = logregcv.predict(X_train_pca_cv[:,:comp])
+        yhat_valid_pca_cv = logregcv.predict(X_valid_pca_cv[:,:comp])
+        
+        # get accuracy       
+        accuracy_train_cv[comp,fold_ctr] = accuracy_score(y_train_cv, yhat_train_pca_cv)
+        accuracy_valid_cv[comp,fold_ctr] = accuracy_score(y_valid_cv, yhat_valid_pca_cv)
+        
+    fold_ctr += 1
+```
+
+
+
+
+```python
+scores_valid = np.mean(accuracy_valid_cv, axis=1)[1:]
+scores_train = np.mean(accuracy_train_cv, axis=1)[1:]
+
+for i in range(len(scores_valid)):
+    if np.max(scores_valid)-scores_valid[i]<0:
+        n_components_optimal=i+1
+        break
+
+best_cv = range(1, 25)[np.argmax(scores_valid)]
+
+pca = PCA(n_components=best_cv)
+pca.fit(x_train)
+x_train_pca_best = pca.transform(x_train)
+x_val_pca_best = pca.transform(x_val)
+logreg_pca = LogisticRegression(fit_intercept = True)
+logreg_pca.fit(x_train_pca_best, y_train)
+pred_pca_cv = logreg_pca.predict(x_val_pca_best)
+
+print('optimal number of components is:', best_cv)
+print('Train Classification Accuracy: {}'.format(logreg_pca.score(x_train_pca_best, y_train)))
+print('Test Classification Accuracy: {}'.format(logreg_pca.score(x_val_pca_best, y_val)))
+confusion_matrix(y_train, logreg_pca.predict(x_train_pca_best))
+```
+
+
+    optimal number of components is: 17
+    Train Classification Accuracy: 0.7623642943305187
+    Test Classification Accuracy: 0.7617328519855595
+
+
+
+
+
+    array([[593,  27],
+           [170,  39]])
+
+
+
+
+
+```python
+ax=make_roc("PCA",logreg_pca, y_train, x_train_pca_best, labe=10, skip=2)
+```
+
+
+
+![png](Models_files/Models_36_0.png)
+
+
+### Decision Tree
+
+A third classification model that we attempted to impliment was the decision tree classifier. We thought this would be a particularly promising model to try because of it's interpretability both to us and Spotify in terms of business applicability. The way decision trees work is by classifying through making cutoffs with certain predictors, in essence saying that for certain values of combinations of predictors indicate a "positive" (successful playlist in this case), and other are indicative of a negative (unsuccessful playlist). 
+
+We cross validated the optimal depth of the tree to be 2 decisions (indicating that few predictors are significant towards predicting playlist significance), and saw an AUC of $\bf{.70}$ and train classification accuracy of $\bf{.76}$. We also see that the model is able to have a true positive rate of 56 out of the 209 successful playlists. This improved true positive rate in comparison with the baseline in combination with the interpretability of Decision Tree as a classifier makes this a strong contender for applicability in determining which playlists will ultimately be successful. 
+
+
+
+```python
+from IPython.display import Image
+Image(filename='tree.png')
+```
+
+
+
+
+
+![png](Models_files/Models_38_0.png)
+
+
+
+
+
+```python
+
+cv_scores = []
+depths = list(range(2,15))
+
+for depth in depths:
+    tree_cv = DecisionTreeClassifier(max_depth = depth)
+    tree_cv.fit(x_train, y_train)
+    scores = cross_val_score(tree_cv, x_train, y_train, cv = 5, scoring='accuracy')
+    cv_scores.append(scores.mean())
+
+optimal_depth = depths[cv_scores.index(max(cv_scores))]
+print('The optimal tree depth is:', optimal_depth)
+tree_cv_final = DecisionTreeClassifier(max_depth = optimal_depth)
+tree_cv_final.fit(x_train, y_train)
+tree_pred = tree_cv_final.predict(x_val)
+print("Tree Depth",optimal_depth, "Train Score: ",tree_cv_final.score(x_train,y_train))
+print("Tree Depth",optimal_depth, "Test Score: ",tree_cv_final.score(x_val,y_val))
+print(confusion_matrix(y_train, tree_cv_final.predict(x_train)))
+export_graphviz(tree_cv_final)
+```
+
+
+    The optimal tree depth is: 3
+    Tree Depth 3 Train Score:  0.794933655006
+    Tree Depth 3 Test Score:  0.761732851986
+    [[603  17]
+     [153  56]]
+
+
+
+
+```python
+ax=make_roc("Decision Tree",tree_cv_final, y_train, x_train, labe=10, skip=2)
+```
+
+
+
+![png](Models_files/Models_40_0.png)
+
+
+### K-NN
+
+KNN works in classification by attempting to detect clusters in the data via proximity to other similar data points. In data that is clearly defined, or well separated, this is a particularly powerful tool because distance between points contains a lot of information as to how the observations should ultimately be classified. The limitations of the model in predicting song followers is that due to the subjectivity of any playlist and the variability of what constitutes a successful playlist, even when genre is controlled for, it is unlikely that all successful clusters would be well separated into "successful" and "unsuccessful" playlists. 
+
+Because of this, it is unsurprising that KNN is the worst preformance of the models thus far, with a train prediction accuracy of $\bf{.76}$ and an AUC of $\bf{.72}$. We see that KNN has by far the worst predictive accuracy of all non-baseline models, only correctly predicting 22 of 209 successful playlists as such. We recall that the ultimate goal for these classification models is to gain intuition as to which predictors are relevant in determining playlist success, as measured through number of followes. Because this model has little interpretability, in comparison with its poor true positive rate, we see that this model is not a good choice for our final classification model. 
+
+
+
+```python
+#knn
+
+neighbors = list(range(1,50))
+cv_scores = []
+
+for k in neighbors:
+    knn = KNN(n_neighbors=k)
+    scores = cross_val_score(knn, x_train, y_train, cv=10, scoring='accuracy')
+    cv_scores.append(scores.mean())
+
+optimal_k = neighbors[cv_scores.index(max(cv_scores))]
+knn = KNN(n_neighbors = optimal_k)
+knn.fit(x_train, y_train)
+knn_pred = knn.predict(x_val)
+
+print("KNN", optimal_k,"Train: ",knn.score(x_train, y_train))
+print("KNN", optimal_k,"Test: ",knn.score(x_val, y_val))
+confusion_matrix(y_train, knn.predict(x_train))
+```
+
+
+    KNN 30 Train:  0.762364294331
+    KNN 30 Test:  0.761732851986
+    Area under the curve knn: 0.524627075711
+
+
+
+
+
+    array([[610,  10],
+           [187,  22]])
+
+
+
+
+
+```python
+ax=make_roc("KNN",knn, y_train, x_train, labe=10, skip=2)
+```
+
+
+
+![png](Models_files/Models_43_0.png)
+
+
+### Random Forest
+
+A random forest is a particularly useful extension of the decision tree. It is an ensemble method in which many independent decision trees are constucted by bootstrapping predictors and taking a random sample of predictors to be used in each tree to form a "random forest". This is often able to out preform a single decision tree by finding new combinations of trees with different leaves in order to improve prediction accuracy. 
+
+The random forest surprisingly did not do as well as the single decision tree, with an AUC of and a classification accuracy of . Because we see that the optimal number of trees in the random forest is only 2, meaning that there isn't a substantial improvement by having more than a single decision tree, this result is not surprising. This is consistent with above findings that very few predictors end up being significant in predicting playlist success. 
+
+The random forest is seen below to have a train prediction accuracy of $\bf{.69}$ and an AUC of $\bf{.79}$. It is also correclty predicting 93 of the 207 successful playlists, which is by far the best of any model. An additional pro of this model is that similar to the decision tree, as the random forest is made up of many decision trees, it too is quite interpretable. The output enables us to have visibility into which predictors are relevant in predicting playlist success, thus making this the best model choice of all tried thus far. 
+
+
+
+```python
+trees = [2,4,8,16,32,64,128,256]
+rf_train_score = []
+rf_test_score = []
+rf_oob = []
+
+for tree in trees:
+    rf = RandomForestClassifier(n_estimators = tree, oob_score = True, max_depth = 2)
+    rf.fit(x_train,y_train)
+    rf_train_score.append(rf.score(x_train,y_train))
+    rf_test_score.append(rf.score(x_val,y_val))
+    rf_oob.append(rf.oob_score_)
+    
+plt.figure()
+plt.xscale('log',basex = 2)
+plt.ylim(0.5,1.05)
+plt.plot(trees,rf_train_score, label = "Train")
+plt.plot(trees,rf_test_score, label = "Test")
+plt.title('Number of Trees vs. Accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Number of Trees')
+plt.legend()
+plt.show()
+```
+
+
+
+![png](Models_files/Models_45_0.png)
+
+
+
+
+```python
+cv_scores = []
+predictors = list(range(2,len(x_train.columns)+1))
+
+for predictor in predictors:
+    feat = int(predictor)
+    rf_cv = RandomForestClassifier(n_estimators = 2, oob_score = True, max_features = feat, max_depth = 5)
+    rf_cv.fit(x_train,y_train)
+    scores = cross_val_score(rf_cv, x_train, y_train, cv = 5, scoring='accuracy')
+    cv_scores.append(scores.mean())
+
+optimal_predictors = predictors[cv_scores.index(max(cv_scores))]
+print("The ideal # of predictors with 2 trees is:",optimal_predictors)
+```
+
+
+    The ideal # of predictors with 2 trees is: 26
+
+
+
+
+```python
+predictor_opt = max(cv_scores)
+rf_opt = RandomForestClassifier(n_estimators = 2, oob_score = True, max_features = predictor_opt, max_depth = 5)
+rf_opt.fit(x_train, y_train)
+rf_pred = rf_opt.predict(x_val)
+cv_score_test = cross_val_score(rf_opt, x_val, y_val, cv = 5, scoring = 'accuracy')
+print("Test accuracy:", np.mean(cv_score_test))
+confusion_matrix(y_train, rf_opt.predict(x_train))
+```
+
+
+    Test accuracy: 0.692941317941
+    Area under the curve: 0.573072051787
+
+
+
+
+
+    array([[571,  49],
+           [116,  93]])
+
+
+
+
+
+```python
+ax=make_roc("Random Forest",rf_opt, y_train, x_train, labe=2, skip=2)
+```
+
+
+
+![png](Models_files/Models_48_0.png)
+
+
+
+
+
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pred</th>
+      <th>weight</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>num_songs</td>
+      <td>0.006297</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>av_song_pop</td>
+      <td>0.400135</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>pct_explicit</td>
+      <td>0.031838</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>avg_dur</td>
+      <td>0.034040</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>pop_pct</td>
+      <td>0.026123</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>rap_pct</td>
+      <td>0.002603</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>rock_pct</td>
+      <td>0.060450</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>country_pct</td>
+      <td>0.002032</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>indie_folk_pct</td>
+      <td>0.019656</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>edm_pct</td>
+      <td>0.081291</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>top_3_song_avg_pop</td>
+      <td>0.062123</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>percent_international</td>
+      <td>0.035751</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>diff_song_pop</td>
+      <td>0.040818</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>diff_artist_pop</td>
+      <td>0.009817</td>
+    </tr>
+    <tr>
+      <th>69</th>
+      <td>pct_w_genre</td>
+      <td>0.025569</td>
+    </tr>
+    <tr>
+      <th>126</th>
+      <td>Marshmello*rap_pct</td>
+      <td>0.032075</td>
+    </tr>
+    <tr>
+      <th>155</th>
+      <td>Kanye West*edm_pct</td>
+      <td>0.014525</td>
+    </tr>
+    <tr>
+      <th>237</th>
+      <td>Imagine Dragons*rock_pct</td>
+      <td>0.055466</td>
+    </tr>
+    <tr>
+      <th>239</th>
+      <td>Imagine Dragons*country_pct</td>
+      <td>0.014815</td>
+    </tr>
+    <tr>
+      <th>270</th>
+      <td>Maroon 5*rock_pct</td>
+      <td>0.005597</td>
+    </tr>
+    <tr>
+      <th>390</th>
+      <td>Future*rap_pct</td>
+      <td>0.038978</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+Above is a list of predictors that the random forest output found to be significant for a forest with the optimal number of trees and with each tree having the optimal number of predictors. Note that these are slightly different than the predictors used in our generative model, only because of the randomness of random forest output and natural variability in what it produces. 
+
+
+
+```python
+data_matrix = [['Model Type', 'AUC Score','Confusion Matrix','Hyperparameters', 'Interpretability'],
+               ['Simple Logistic CV', 0.72, confusion_matrix(y_train, log_cv.predict(x_train)), 'L2 Regularization', 'Medium'],
+               ['KNN', 0.76 , confusion_matrix(y_train, knn.predict(x_train)), 'Optimal # of neighbors = 12', 'Low'],
+               ['PCA', 0.74, confusion_matrix(y_train, logreg_pca.predict(x_train_pca_best)), 'Optimal # of components ', 'Low'],
+               ['Decision Tree', 0.68, confusion_matrix(y_train, tree_cv_final.predict(x_train)), 'Optimal Tree Depth = 2', 'High'],
+               ['Random Forest', 0.79, confusion_matrix(y_train, rf_opt.predict(x_train)), 'Optimal # Trees = 2, Optimal # Pred = 26', 'High']]
+
+table = ff.create_table(data_matrix)
+py.iplot(table, filename='class_table')
+```
+
+
+
+
+
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~cohenk2/2.embed" height="230px" width="100%"></iframe>
+
+
+
+## Classification Results
+
+**Final Model Selection**: Ultimately based on the factors we see above for each model, Random Forrest maximizes both AUC (and by extent true positive rate, the metric most important in predicting playlist success, as well as interpretability, and therefore is our choice for the best classification model in predicting a successful playlist.  
+
+
+
+```python
+test_data = pd.read_csv('test_data.csv')
+test_data = test_data.fillna(0)
+top_quart = train_data['followers'].quantile(0.75)
+test_data['pop_or_not'] = np.where(test_data['followers'] >= top_quart, 1, 0)
+y_data_test = test_data['pop_or_not']
+x_data_test = test_data.drop(['followers','pop_or_not', 'Unnamed: 0','playlist', 'name'], axis =1) 
+```
+
+
+Below we run our best classification model, the random forest, on the test data. We see that it has a classification accuracy of .69, and a true positive rate of 40 out of 109. Though this of course is not ideal, given the difficulty in predicting success of a playlist we are relatively satisfied with this model's outcome. 
+
+
+
+
+
+    Test accuracy: 0.692857142857
+
+
+
+
+
+    array([[324,  55],
+           [ 69,  40]])
 
 
 
@@ -645,7 +1279,7 @@ Since we see a particularly bad test R^2 score, we go ahead and try other regres
 
 
 
-![png](Models_files/Models_35_0.png)
+![png](Models_files/Models_69_0.png)
 
 
 Above, we see the histogram of the residuals, which seems relatively right skewed and not centered around 0, which is an issue. Let's try Lasso Regression, now.
@@ -665,7 +1299,7 @@ Above, we see the histogram of the residuals, which seems relatively right skewe
 
 
 
-![png](Models_files/Models_39_0.png)
+![png](Models_files/Models_73_0.png)
 
 
 Above, we see the histogram of the residuals for Lasso, which seems relatively right skewed and not centered around 0, which is an issue.

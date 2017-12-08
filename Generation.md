@@ -172,8 +172,25 @@ Our scoring metric itself is affected, as mentioned, by the attributes from our 
 
 
 
+We wrote a function that would give each song a score-- we provide the code to this portion of the project only because it gives some insight into how our generator works.
 
 
+
+```python
+def song_score(artist, song_pop, explicit, artist_followers):
+    score = 1
+    score = score*1.2*song_pop
+    score = score*.05*artist_followers
+    if "The Weeknd" in artist and 'r&b' == desired_genre:
+        score = score*1.02
+    if "Sia" in artist and 'pop' == desired_genre:
+        score = score*1.04
+    if song_pop > 95:
+        score = score*1.09
+    if explicit == 1:
+        score = score*1.007
+    return(score)
+```
 
 
 As aforementioned, we can score our R&B songs weighted the variables accordingly (based on the weighted outputs from our random forest model) - including the bonus on songs from the Weeknd. Below you can see a small subset of what this scoring looks like.
@@ -249,13 +266,6 @@ Our R&B playlist then is as follows:
 
 
 
-```python
-score_frame.sort_values('score', ascending = False)
-threshold = score_frame['score'].quantile(q = 0.75)
-top_songs = score_frame[score_frame['score'] >= threshold]
-curated_playlist = top_songs.sample(50)
-curated_playlist
-```
 
 
 
@@ -595,36 +605,6 @@ We can repeat the same process for Jazz and Pop. Our Jazz playlist is as follows
 
 
 
-```python
-df = pd.read_csv("total_info.csv", encoding = 'latin')
-del df['Unnamed: 0']
-
-desired_genre = 'jazz'
-df = df[df['artist_genres'].str.contains(desired_genre)]
-df.head()
-
-unique_songs = df['song_name'].unique()
-columns = ['song_name','artist_name','score']
-score_frame = pd.DataFrame(index=range(0,len(unique_songs)), columns=columns)
-for idx,song in enumerate(unique_songs):
-    try:
-        score_frame.loc[idx]['song_name'] = song
-        score_frame.loc[idx]['artist_name'] = df.loc[df['song_name'] == song]['artist_name'].iloc[0]
-        this_artist = df.loc[df['song_name'] == song]['artist_name'].iloc[0]
-        this_popularity = df.loc[df['song_name'] == song]['popularity'].iloc[0]
-        this_explicit = df.loc[df['song_name'] == song]['explicit'].iloc[0]
-        this_art_followers = df.loc[df['song_name'] == song]['artist_followers'].iloc[0]
-        score_frame.loc[idx]['score'] = song_score(this_artist, this_popularity, this_explicit, this_art_followers)
-    except:
-        score_frame.loc[idx]['score'] = 0
-        pass
-    
-score_frame.sort_values('score', ascending = False)
-threshold = score_frame['score'].quantile(q = 0.75)
-top_songs = score_frame[score_frame['score'] >= threshold]
-curated_playlist = top_songs.sample(50)
-curated_playlist
-```
 
 
 
@@ -964,36 +944,6 @@ Our Pop playlist is as follows:
 
 
 
-```python
-df = pd.read_csv("total_info.csv", encoding = 'latin')
-del df['Unnamed: 0']
-
-desired_genre = 'pop'
-df = df[df['artist_genres'].str.contains(desired_genre)]
-df.head()
-
-unique_songs = df['song_name'].unique()
-columns = ['song_name','artist_name','score']
-score_frame = pd.DataFrame(index=range(0,len(unique_songs)), columns=columns)
-for idx,song in enumerate(unique_songs):
-    try:
-        score_frame.loc[idx]['song_name'] = song
-        score_frame.loc[idx]['artist_name'] = df.loc[df['song_name'] == song]['artist_name'].iloc[0]
-        this_artist = df.loc[df['song_name'] == song]['artist_name'].iloc[0]
-        this_popularity = df.loc[df['song_name'] == song]['popularity'].iloc[0]
-        this_explicit = df.loc[df['song_name'] == song]['explicit'].iloc[0]
-        this_art_followers = df.loc[df['song_name'] == song]['artist_followers'].iloc[0]
-        score_frame.loc[idx]['score'] = song_score(this_artist, this_popularity, this_explicit, this_art_followers)
-    except:
-        score_frame.loc[idx]['score'] = 0
-        pass
-    
-score_frame.sort_values('score', ascending = False)
-threshold = score_frame['score'].quantile(q = 0.75)
-top_songs = score_frame[score_frame['score'] >= threshold]
-curated_playlist = top_songs.sample(50)
-curated_playlist
-```
 
 
 
