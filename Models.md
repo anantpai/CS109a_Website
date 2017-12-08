@@ -4,6 +4,11 @@ notebook: Models.ipynb
 nav_include: 3
 ---
 
+
+
+
+
+
 ## Our Modeling Journey
 
 Our journey in model creation had a variety of different phases as we iterated through the process of running into roadblocks and circling back to try a different method or approach. Looking at an overview of what that actually meant for us we can briefly trace the outline of our steps and then walk through it.
@@ -17,6 +22,8 @@ Our journey in model creation had a variety of different phases as we iterated t
 4. Now that we are able to tell whether or not a playlist is successful, we tried to create a regression model that would predict just how successful it would be. This intuition made sense because there were so many garbage playlists (eg. Learn to Speak Swedish, etc.). Thinking our data was still being negatively effected by the skew of playlist followers, we decided to only look at the popular playlists that we ultimately are seeking to generate. Using our new bolstered dataset on this subset, we saw mildly improved performance, but nothing substantial enough to gain incredible insights. 
 
 Thus, at the end, we are able to predict, with some accuracy, whether or not a playlist will be successful or not. Once we predict whether or not it is successful, we can predict how successful it will be (using a relatively unreliable model). You see our workflow below.
+
+
 
 
 
@@ -362,16 +369,6 @@ Our hope was that their penalty factors would address the aforementioned problem
 
 
 
-```python
-data_matrix = [['Model Type', 'Train R^2 CV Performance', 'Overfitting?'],
-               ['Full Linear', 'Negative', 'NA'],
-               ['Backwards Stepwise', 'Negative', 'NA'],
-               ['LassoCV', 0.148, 'Unlikely'],
-               ['RidgeCV', 0.197, 'Unlikely']]
-
-table = ff.create_table(data_matrix)
-py.iplot(table, filename='simple_table')
-```
 
 
     High five! You successfully sent some data to your account on plotly. View your plot in your browser at https://plot.ly/~cohenk2/0 or inside your plot.ly account where it is named 'simple_table'
@@ -599,17 +596,6 @@ Above is a list of predictors that the random forest output found to be signific
 
 
 
-```python
-data_matrix = [['Model Type', 'AUC Score','Confusion Matrix','Hyperparameters', 'Interpretability'],
-               ['Simple Logistic CV', 0.72, confusion_matrix(y_train, log_cv.predict(x_train)), 'L2 Regularization', 'Medium'],
-               ['KNN', 0.76 , confusion_matrix(y_train, knn.predict(x_train)), 'Optimal # of neighbors = 12', 'Low'],
-               ['PCA', 0.74, confusion_matrix(y_train, logreg_pca.predict(x_train_pca_best)), 'Optimal # of components ', 'Low'],
-               ['Decision Tree', 0.68, confusion_matrix(y_train, tree_cv_final.predict(x_train)), 'Optimal Tree Depth = 2', 'High'],
-               ['Random Forest', 0.79, confusion_matrix(y_train, rf_opt.predict(x_train)), 'Optimal # Trees = 2, Optimal # Pred = 26', 'High']]
-
-table = ff.create_table(data_matrix)
-py.iplot(table, filename='class_table')
-```
 
 
 
